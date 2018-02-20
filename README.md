@@ -28,57 +28,60 @@ You'll need to set the `Config` values in the following files.
 We couldn't find a way to demonstrate the following actions with the xero-php SDK.
 
 **Attachments**
-Allows you to attach files to an account
-Allows you to attach files to spend or receive money transactions
-Allows you to attach files to bank transfers
-Allows you to attach files to a contact
-Allows you to attach files to credit notes
-Attach files to sales invoices or purchase bills
-Allows you to attach files to a manual journal
-Allows you to attach images to draft expense claim receipts 
+
+* Allows you to attach files to an account
+* Allows you to attach files to spend or receive money transactions
+* Allows you to attach files to bank transfers
+* Allows you to attach files to a contact
+* Allows you to attach files to credit notes
+* Attach files to sales invoices or purchase bills
+* Allows you to attach files to a manual journal
+* Allows you to attach images to draft expense claim receipts 
 
 **ContactGroups**
-Allows you to remove a contact from a contact group
-Allows you to remove all contacts from a contact group
+
+* Allows you to remove a contact from a contact group
+* Allows you to remove all contacts from a contact group
 
 **Currencies**
-Add currencies to your organisation
+
+* Add currencies to your organisation
 
 **Invoices**
-Retrieve the online invoice Url for sales invoices 
+* Retrieve the online invoice Url for sales invoices 
 
 **InvoiceReminder**
-PR made to SDK to add support for this
+* PR made to SDK to add support for this
 
 **Reports**
-TenNinetyNine
-AgedPayablesByContact
-AgedReceivablesByContact
-BankStatement - missing required bankAccountID
-BankSummary
-BudgetSummary
-ExecutiveSummary
-TrialBalance
+* TenNinetyNine
+* AgedPayablesByContact
+* AgedReceivablesByContact
+* BankStatement - missing required bankAccountID
+* BankSummary
+* BudgetSummary
+* ExecutiveSummary
+* TrialBalance
 
 **TaxRates**
-Allows you to Delete a tax rate for a Xero organisation
+* Allows you to Delete a tax rate for a Xero organisation
 
 **Tracking Categories**
-Add new  options 
-Rename  options 
-Update  options 
-Delete  options
+* Add new options 
+* Rename options 
+* Update options 
+* Delete options
 
 ## Acknowledgement
 
-Special thanks to [Connectifier](https://github.com/connectifier) and [Ben Mccann](https://github.com/benmccann).  Marshalling and Unmarshalling in XeroClient was derived and extended from [Xero-Java-Client](https://github.com/connectifier/xero-java-client)
+Special thanks to [Michael Calcinai](https://github.com/calcinai) for all his work on the [xero-php](https://github.com/calcinai/xero-php) SDK
   
 
 ## License
 
 This software is published under the [MIT License](http://en.wikipedia.org/wiki/MIT_License).
 
-	Copyright (c) 2016 Xero Limited
+	Copyright (c) 2018 Xero Limited
 
 	Permission is hereby granted, free of charge, to any person
 	obtaining a copy of this software and associated documentation
