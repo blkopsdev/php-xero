@@ -12,9 +12,9 @@ Go to [http://app.xero.com](http://app.xero.com) and login with your Xero user a
 ### Setup App
 Download this repo and place in your webroot.
 
-Open your terminal and change to the root of this project and download dependencies with Composer.
+Open your terminal and download dependencies with Composer.
 
-	`composer init`
+	`composer update`
 
 ### Configure
 You'll need to set the `Config` values in the following files.
