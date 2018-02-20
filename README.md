@@ -23,7 +23,20 @@ You'll need to set the `Config` values in the following files.
 * callback.php
 * get.php
 
-<script src="https://gist.github.com/SidneyAllen/386d3ed3b3b5499c577a59f344a333a5.js"></script>
+```php
+	$config = [
+		'oauth' => [
+			'callback'        => 'http://localhost/myapp/callback.php',
+			'consumer_key'    => 'YOUR_CONSUMER_KEY',
+			'consumer_secret' => 'YOUR_CONSUMER_SECRET',
+			'signature_location'  => \XeroPHP\Remote\OAuth\Client::SIGN_LOCATION_QUERY,
+			],
+		'curl' => [
+			CURLOPT_USERAGENT   => 'xero-php sample app',
+			CURLOPT_CAINFO => __DIR__.'/certs/ca-bundle.crt',
+		],
+	];
+```
 
 
 ### What isn't supported in the xero-php SDK?
