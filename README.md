@@ -13,14 +13,16 @@ Go to [http://app.xero.com](http://app.xero.com) and login with your Xero user a
 Download this repo and place in your webroot.
 
 Open your terminal and change to the root of this project and download dependencies with Composer.
-`composer init`
+
+	`composer init`
 
 ### Configure
 You'll need to set the `Config` values in the following files.
 
-	* request_token.php
-	* callback.php
-	* get.php
+* request_token.php
+* callback.php
+* get.php
+
 
 ### What isn't supported in the xero-php SDK?
 We couldn't find a way to demonstrate the following actions with the xero-php SDK.
