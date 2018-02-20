@@ -1,4 +1,4 @@
-# xero-php-sample-app
+# xero-php sample app
 
 This is a sample app for the xero-php SDK. Currently, this app focuses on demonstrating the functionality of all Accounting API endpoints and their related actions.  
 
@@ -22,6 +22,19 @@ You'll need to set the `Config` values in the following files.
 * request_token.php
 * callback.php
 * get.php
+
+	`$config = [
+	    'oauth' => [
+	        'callback'        => 'http://localhost/myapp/callback.php',
+	        'consumer_key'    => 'YOUR_CONSUMER_KEY',
+	        'consumer_secret' => 'YOUR_CONSUMER_SECRET',
+	        'signature_location'  => \XeroPHP\Remote\OAuth\Client::SIGN_LOCATION_QUERY,
+		    ],
+	    'curl' => [
+	        CURLOPT_USERAGENT   => 'xero-php sample app',
+	        CURLOPT_CAINFO => __DIR__.'/certs/ca-bundle.crt',
+	    ],
+	];`
 
 
 ### What isn't supported in the xero-php SDK?
