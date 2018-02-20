@@ -1,0 +1,17 @@
+{
+    "name": "xero/xero-php-sample-app",
+    "description": "Xero sample app for PHP SDK",
+    "type": "project",
+    "require": {
+        "calcinai/xero-php": "1.7",
+        "monolog/monolog": "1.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "SidneyAllen",
+            "email": "sid.maestre@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
