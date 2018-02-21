@@ -33,9 +33,6 @@
 		->setToken($oauth_session['token'])
 		->setTokenSecret($oauth_session['token_secret']);
 
-	// Init your Example API calls
-	$ex->init($xero);
-
 	if (isset($_POST["endpoint"]) ) {
 		$endpoint = htmlspecialchars($_POST["endpoint"]);
 	} else {

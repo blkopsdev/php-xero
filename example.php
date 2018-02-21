@@ -7,10 +7,6 @@ class ExampleClass
 
    	}
 
-   	public function init($arg) {
-		$xero = $arg;
-   	}
-
 	public function getAccount($xero)
 	{
 		$str = '';
@@ -39,17 +35,17 @@ class ExampleClass
 		$str = '';
 
 		//[Accounts:Create]
-		$new = new \XeroPHP\Models\Accounting\Account($xero);
-		$new->setName('Sales-' . $this->getRandNum())
+		$account = new \XeroPHP\Models\Accounting\Account($xero);
+		$account->setName('Sales-' . $this->getRandNum())
 			->setCode($this->getRandNum())
 			->setDescription("This is my original description.")
 		    ->setType('REVENUE');
-		$new->save();
+		$account->save();
 		//[/Accounts:Create]
 		
-		$str = $str ."Create Account: " . $new["Name"] . " -- " . $new["Description"] . "<br>";
+		$str = $str ."Create Account: " . $account["Name"] . " -- " . $account["Description"] . "<br>";
 		if($returnObj) {
-			return $new;
+			return $account;
 		} else {
 			return $str;
 		}
@@ -110,29 +106,6 @@ class ExampleClass
 		return $str;
 	}
 
-	public function attachmentAccount($xero)
-	{
-		$str = '';
-
-		$new = $this->createAccount($xero,true);
-		$guid = $new["AccountID"];
-		
-		//[Accounts:Attachment]
-		$attachment = new \XeroPHP\Models\Accounting\Attachment($xero);
-		$attachment->createFromLocalFile('helo-heros.jpg');
-
-		$account = $xero->loadByGUID('Accounting\\Account', $guid);
-
-
-
-		$account->delete();
-		//[/Accounts:Delete]
-
-		$str = $str . "Deleted Account: " . $account["Name"] . "<br>" ;
-
-		return $str;
-	}
-
 	public function getBankTransaction($xero)
 	{	
 		$str = '';
@@ -180,7 +153,7 @@ class ExampleClass
 			$banktransaction->save();
 			//[/BankTransactions:Create]
 	
-			$str = $str ."Create a new Bank Transaction: " . $banktransaction["Reference"] . " -- $" . $banktransaction["Total"] . "<br>" ;
+			$str = $str ."Create Bank Transaction: " . $banktransaction["Reference"] . " -- $" . $banktransaction["Total"] . "<br>" ;
 
 		} else {
 			$str = $str . "No Bank Account exists";	
@@ -270,15 +243,15 @@ class ExampleClass
 			$toBankAccount->setCode($account[1]["Code"])
 				->setAccountId($account[1]["AccountId"]);
 
-			$new = new \XeroPHP\Models\Accounting\BankTransfer($xero);
-			$new->setDate(new DateTime('2017-01-02'))
+			$banktransfer = new \XeroPHP\Models\Accounting\BankTransfer($xero);
+			$banktransfer->setDate(new DateTime('2017-01-02'))
 				->setToBankAccount($toBankAccount)
 				->setFromBankAccount($fromBankAccount)
 				->setAmount("50");
-			$new->save();
+			$banktransfer->save();
 			//[/BankTransfers:Create]
 
-			$str = $str ."Create a new Bank Transfer: " . $new["BankTransferID"] . " -- $" . $new["Amount"] . "<br>" ;
+			$str = $str ."Create Bank Transfer: " . $banktransfer["BankTransferID"] . " -- $" . $banktransfer["Amount"] . "<br>" ;
 
 		} else {
 			$str = $str ."Found less than 2 Bank Accounts  - can't work with Bank Transfers without 2. ";
@@ -309,7 +282,7 @@ class ExampleClass
 		$contacts = $xero->load('Accounting\\Contact')->execute();
 		//[/Contacts:Read]
 
-		$str = $str ."Get all Contact Total: " . count($contacts) . "<br>";
+		$str = $str ."Get Contacts: " . count($contacts) . "<br>";
 	
 		// GET Contact with WHERE CLAUSE
 		$where = $xero->load('Accounting\\Contact')->where('
@@ -382,11 +355,10 @@ class ExampleClass
 		$contact->save();
 		//[/Contacts:Archive]
 				
-		$str = $str ."Archive my Contact: " . $contact["Name"] . "<br>";
+		$str = $str ."Archive Contact: " . $contact["Name"] . "<br>";
 
 		return $str;
 	}
-
 
 	public function getContactGroup($xero,$returnObj=false)
 	{
@@ -396,7 +368,7 @@ class ExampleClass
 		$contactgroup = $xero->load('Accounting\\ContactGroup')->execute();
 		//[/ContactGroups:Read]
 
-		$str = $str ."Get all Contact Groups Total: " . count($contactgroup) . "<br>";
+		$str = $str ."Get Contact Groups: " . count($contactgroup) . "<br>";
 	
 		$where = $xero->load('Accounting\\ContactGroup')->where('Status=="ACTIVE"')->execute();
 		if (count($where)) {
@@ -466,7 +438,7 @@ class ExampleClass
 		$contactgroup->save();
 		//[/ContactGroups:Archive]
 		
-		$str = $str . "Set Status to DELETE for ContactGroup: " . $contactgroup["Name"] . "<br>" ;
+		$str = $str . "Delete ContactGroup: " . $contactgroup["Name"] . "<br>" ;
 
 		return $str;
 	}
@@ -480,16 +452,17 @@ class ExampleClass
 		$new = $this->createContactGroup($xero,true);
 		$guid = $new['ContactGroupID'];
 
+		// DOES NOT Work
 		//[ContactGroups:Update]
-		$contactgroup = new \XeroPHP\Models\Accounting\ContactGroup($xero);
-		$contactgroup->setContactGroupID($guid);
+		//$contactgroup = new \XeroPHP\Models\Accounting\ContactGroup($xero);
+		//$contactgroup->setContactGroupID($guid);
 
 		//$contactgroup = $xero->loadByGUID('Accounting\\ContactGroup', $guid);		
-		$contactgroup->addContact($contact[0]);
-		$contactgroup->delete();
+		//$contactgroup->addContact($contact[0]);
+		//$contactgroup->delete();
 		//[/ContactGroups:Update]
 
-		$str = $str . "Update ContactGroup: " . $contactgroup["Name"] .  "<br>" ;
+		$str = $str . "Remove Contacts ContactGroup: " . $contactgroup["Name"] .  "<br>" ;
 
 		return $str;
 	}
@@ -502,7 +475,7 @@ class ExampleClass
 		$creditnotes = $xero->load('Accounting\\CreditNote')->execute();
 		//[/CreditNotes:Read]
 
-		$str = $str ."Get all CreditNote Total: " . count($creditnotes) . "<br>";
+		$str = $str ."Get CreditNotes: " . count($creditnotes) . "<br>";
 
 		$where = $xero->load('Accounting\\CreditNote')->where('
 			    Type=="' . \XeroPHP\Models\Accounting\CreditNote::CREDIT_NOTE_TYPE_ACCPAYCREDIT . '" 
@@ -523,7 +496,6 @@ class ExampleClass
 	public function createCreditNote($xero,$returnObj=false)
 	{
 		$str = '';
-
 		
 		$lineitem = new \XeroPHP\Models\Accounting\Invoice\LineItem($xero);
 		$lineitem->setDescription('Credit Note-' . $this->getRandNum())
@@ -599,7 +571,7 @@ class ExampleClass
 		
 	}
 
-	public function refundCreditNote($xero,$returnObj=false)
+	public function refundCreditNote($xero)
 	{
 		$str = '';
 
@@ -607,20 +579,16 @@ class ExampleClass
 		$account = $this->getBankAccount($xero);
 
 		//[CreditNotes:Refund]
-		$new = new \XeroPHP\Models\Accounting\Payment($xero);
-		$new->setCreditNote($creditnote)
+		$creditnote = new \XeroPHP\Models\Accounting\Payment($xero);
+		$creditnote->setCreditNote($creditnote)
 			->setAccount($account[0])
 			->setAmount("2.00");
-		$new->save();
+		$creditnote->save();
 		//[/CreditNotes:Refund]
 		
-		$str = $str . "Create CreditNote Refund : " . $new["PaymentID"] . "<br>" ;
+		$str = $str . "Create CreditNote Refund : " . $creditnote["PaymentID"] . "<br>" ;
 		
-		if($returnObj) {
-			return $new;
-		} else {
-			return $str;
-		}
+		return $str;
 	}	
 
 	public function deleteCreditNote($xero)
@@ -669,7 +637,7 @@ class ExampleClass
 		$currencies = $xero->load('Accounting\\Currency')->execute();
 		//[/Currencies:Read]
 
-		$str = $str . "Get all Currency Total: " . count($currencies) . "<br>";
+		$str = $str . "Get Currency: " . count($currencies) . "<br>";
 
 		if (count($currencies)) {
 			$str = $str . "First Currency found: " .  $currencies[0]["Code"] . " -- $" . $currencies[0]["Description"] . "<br>";
@@ -689,7 +657,7 @@ class ExampleClass
 		$employees = $xero->load('Accounting\\Employee')->execute();
 		//[/Employees:Read]
 
-		$str = $str . "Get all Employee Total: " . count($employees) . "<br>";
+		$str = $str . "Get Employee: " . count($employees) . "<br>";
 
 		$where = $xero->load('Accounting\\Employee')->where('
 			    Status=="' . \XeroPHP\Models\Accounting\Contact::CONTACT_STATUS_ACTIVE . '" 
@@ -718,7 +686,7 @@ class ExampleClass
 		$employee->save();
 		//[/Employees:Create]
 		
-		$str = $str . "Create a new Employee: " . $employee["FirstName"] . "  " . $employee["LastName"]  . "<br>" ;
+		$str = $str . "Create Employee: " . $employee["FirstName"] . "  " . $employee["LastName"]  . "<br>" ;
 
 		if($returnObj) {
 			return $employee;
@@ -753,7 +721,7 @@ class ExampleClass
 		$expenseclaims = $xero->load('Accounting\\ExpenseClaim')->execute();
 		//[/ExpenseClaims:Read]
 		
-		$str = $str . "Get all ExpenseClaim Total: " . count($expenseclaims) . "<br>";
+		$str = $str . "Get ExpenseClaim: " . count($expenseclaims) . "<br>";
 
 		$where = $xero->load('Accounting\\ExpenseClaim')->where('
 			    Status=="' . \XeroPHP\Models\Accounting\ExpenseClaim::EXPENSE_CLAIM_STATUS_SUBMITTED . '" 
@@ -798,7 +766,7 @@ class ExampleClass
 			$expenseclaim->save();
 			//[/ExpenseClaims:Create]
 
-			$str = $str ."Created a new Expense Claim: " . $expenseclaim["ExpenseClaimID"] . "<br>" ;
+			$str = $str ."Created Expense Claim: " . $expenseclaim["ExpenseClaimID"] . "<br>" ;
 		}
 
 		if($returnObj) {
@@ -808,7 +776,7 @@ class ExampleClass
 		}
 	}	
 
-	public function updateExpenseClaim($xero,$returnObj=false)
+	public function updateExpenseClaim($xero)
 	{
 		$str = '';
 		
@@ -841,7 +809,7 @@ class ExampleClass
 			$expenseclaim->save();
 			//[/ExpenseClaims:Update]
 			
-			$str = $str . "Updated a Expense Claim: " . $expenseclaim["ExpenseClaimID"] . "<br>" ;
+			$str = $str . "Updated Expense Claim: " . $expenseclaim["ExpenseClaimID"] . "<br>" ;
 		}
 		
 		return $str;
@@ -979,7 +947,7 @@ class ExampleClass
 		$items = $xero->load('Accounting\\Item')->execute();
 		//[/Items:Read]
 
-		$str = $str . "Get all Item Total: " . count($items) . "<br>";
+		$str = $str . "Get Items: " . count($items) . "<br>";
 
 		$where = $xero->load('Accounting\\Item')->where('IsSold==true')->execute();
 		if (count($where)) {
@@ -1082,7 +1050,7 @@ class ExampleClass
 		$linkedtransactions = $xero->load('Accounting\\LinkedTransaction')->execute();
 		//[/LinkedTransactions:Read]
 
-		$str = $str . "Get all LinkedTransactions Total: " . count($linkedtransactions) . "<br>";
+		$str = $str . "Get LinkedTransactions: " . count($linkedtransactions) . "<br>";
 
 		if($returnObj) {
 			return $linkedtransactions[0];
@@ -1121,7 +1089,7 @@ class ExampleClass
 		}
 	}
 
-	public function updateLinkedTransaction($xero,$returnObj=false)
+	public function updateLinkedTransaction($xero)
 	{
 		$str = '';
 
@@ -1143,13 +1111,9 @@ class ExampleClass
 		$linkedtransaction->save();
 		//[/LinkedTransactions:Update]
 
-		$str = $str . "Updated LinkedTransaction ID: " . $new['LinkedTransactionID'];
+		$str = $str . "Updated LinkedTransaction: " . $new['LinkedTransactionID'];
 		
-		if($returnObj) {
-			return $new;
-		} else {
-			return $str;
-		}
+		return $str;
 	}
 
 	public function deleteLinkedTransaction($xero)
@@ -1249,7 +1213,7 @@ class ExampleClass
 		$payments = $xero->load('Accounting\\Payment')->execute();
 		//[/Payments:Read]
 
-		$str = $str . "Get all Payments Total: " . count($payments) . "<br>";
+		$str = $str . "Get Payments: " . count($payments) . "<br>";
 
 		if($returnObj) {
 			return $all[0];
@@ -1310,7 +1274,7 @@ class ExampleClass
 		$overpayments = $xero->load('Accounting\\Overpayment')->execute();
 		//[/Overpayments:Read]
 
-		$str = $str . "Get all Overpayment Total: " . count($overpayments) . "<br>";
+		$str = $str . "Get Overpayment: " . count($overpayments) . "<br>";
 
 		if($returnObj) {
 			return $all[0];
@@ -1321,7 +1285,6 @@ class ExampleClass
 
 	public function createOverpayment($xero,$returnObj=false)
 	{
-		
 		$str = '';
 
 		$lineitem = $this->getLineItemForOverpayment($xero);
@@ -1412,7 +1375,7 @@ class ExampleClass
 		$prepayments = $xero->load('Accounting\\Prepayment')->execute();
 		//[/Prepayments:Read]
 
-		$str = $str . "Get all Prepayment Total: " . count($prepayments) . "<br>";
+		$str = $str . "Get Prepayments: " . count($prepayments) . "<br>";
 
 		if($returnObj) {
 			return $all[0];
@@ -1512,7 +1475,7 @@ class ExampleClass
 		$purchaseorders = $xero->load('Accounting\\PurchaseOrder')->execute();
 		//[/PurchaseOrders:Read]
 
-		$str = $str . "Get all PurchaseOrders Total: " . count($purchaseorders) . "<br>";
+		$str = $str . "Get PurchaseOrders: " . count($purchaseorders) . "<br>";
 
 		if($returnObj) {
 			return $purchaseorders[0];
@@ -1590,7 +1553,7 @@ class ExampleClass
 		$receipts = $xero->load('Accounting\\Receipt')->execute();
 		//[/Receipts:Read]
 
-		$str = $str . "Get all Receipts Total: " . count($receipts) . "<br>";
+		$str = $str . "Get Receipts: " . count($receipts) . "<br>";
 
 		if($returnObj) {
 			return $receipts[0];
@@ -1833,7 +1796,7 @@ class ExampleClass
 		$trackingcategories = $xero->load('Accounting\\TrackingCategory')->execute();
 		//[/TrackingCategories:Read]
 
-		$str = $str . "Get all TrackingCategories Total: " . count($trackingcategories) . "<br>";
+		$str = $str . "Get TrackingCategories: " . count($trackingcategories) . "<br>";
 
 		if($returnObj) {
 			return $trackingcategories[0];
@@ -1939,7 +1902,7 @@ class ExampleClass
 		$taxrates = $xero->load('Accounting\\TaxRate')->execute();
 		//[/TaxRates:Read]
 
-		$str = $str . "Get all TaxRates Total: " . count($taxrates) . "<br>";
+		$str = $str . "Get TaxRates: " . count($taxrates) . "<br>";
 
 		if($returnObj) {
 			return $taxrates[0];
@@ -2017,7 +1980,7 @@ class ExampleClass
 		$users = $xero->load('Accounting\\User')->execute();
 		//[/Users:Read]
 
-		$str = $str . "Get all User Total: " . count($users) . "<br>";
+		$str = $str . "Get Users: " . count($users) . "<br>";
 
 		if($returnObj) {
 			return $users[0];
@@ -2025,10 +1988,6 @@ class ExampleClass
 			return $str;
 		}
 	}
-
-	
-
-
 
 	// HELPERS
 	public function getRandNum()
@@ -2296,7 +2255,5 @@ class ExampleClass
 			->setRate(5);
 		return $taxcomponent;
 	}
-
-
 }
 ?>
