@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c920c6b7c45be803c3209fd6f4c61af9",
-    "content-hash": "4d20a60f44caa7d95f157e1c9653a45c",
+    "content-hash": "abb1d735ad18679eed9d2991c85cf743",
     "packages": [
         {
             "name": "calcinai/xero-php",
@@ -43,7 +42,7 @@
             ],
             "description": "A client implementation of the Xero API, with a cleaner OAuth interface and ORM-like abstraction.",
             "homepage": "https://github.com/calcinai/xero-php",
-            "time": "2018-01-22 08:05:01"
+            "time": "2018-01-22T08:05:01+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -81,12 +80,12 @@
                 "log",
                 "logging"
             ],
-            "time": "2011-07-07 16:21:02"
+            "time": "2011-07-07T16:21:02+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
