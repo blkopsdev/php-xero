@@ -1,0 +1,16 @@
+<?php
+
+return [
+    'oauth' => [
+        'callback'        => 'http://localhost/oauth/callback',
+        'consumer_key'    => 'YOUR_CONSUMER_KEY',
+        'consumer_secret' => 'YOUR_CONSUMER_SECRET',
+        'signature_location'  => \XeroPHP\Remote\OAuth\Client::SIGN_LOCATION_QUERY,
+    ],
+    'curl' => [
+        CURLOPT_USERAGENT   => 'XeroPHP Sample App',
+        CURLOPT_CAINFO => APP_ROOT . '/certs/ca-bundle.crt',
+    ],
+];
+
+
