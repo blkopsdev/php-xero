@@ -14,7 +14,7 @@ Download this repo and place in your webroot.
 
 Open your terminal and download dependencies with Composer.
 
-	composer update
+	composer install
 
 ### Configure
 You'll need to set the `Config` values in the following files.
