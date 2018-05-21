@@ -7,13 +7,23 @@
 namespace App\Controller;
 
 use League\Plates\Engine;
+use XeroPHP\Application\PublicApplication;
 
 abstract class BaseController
 {
+    /**
+     * @var Engine
+     */
     protected $plates;
 
-    public function __construct(Engine $plates)
+    /**
+     * @var PublicApplication
+     */
+    protected $xero;
+
+    public function __construct(Engine $plates, PublicApplication $xero)
     {
         $this->plates = $plates;
+        $this->xero = $xero;
     }
 }
