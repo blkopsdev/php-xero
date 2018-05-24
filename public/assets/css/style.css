@@ -1,0 +1,12 @@
+#endpoints-accordion .card-header {
+    padding: .3rem .75rem;
+    border-bottom: none;
+}
+
+#endpoints-accordion .card:not(:first-child){
+    border-top: none;
+}
+
+#endpoints-accordion .card-body {
+    border-top: 1px solid rgba(0,0,0,.125);
+}

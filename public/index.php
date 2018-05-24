@@ -73,6 +73,11 @@ $collection->group('application', function (RouteGroup $group) {
     $group->get('disconnect', "$controller::disconnect");
 });
 
+$collection->group('accounts', function (RouteGroup $group) {
+    $controller = \App\Controller\AccountsController::class;
+
+    $group->post('get', "$controller::get");
+});
 
 $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 

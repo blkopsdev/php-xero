@@ -1,13 +1,93 @@
 <?php $this->layout('base', ['title' => 'Endpoints', 'organisation_name' => $organisation_name]) ?>
 
-<div id="endpoints-accordion" class="col-md-3">
-    <?php $this->insert('partials/accordion-item', ['key' => 'accounts', 'name' => 'Accounts', 'endpoints' => [
-        'create' => 'Get',
-        'read' => 'Create',
-        'update' => 'Update',
-        'delete' => 'Delete',
-        'archive' => 'Archive',
-        'add-attachment' => 'Add Attachment',
-    ]]) ?>
+<div class="row">
+
+    <div class="endpoints col-md-3">
+        <h5>Endpoints</h5>
+        <br>
+        <div id="endpoints-accordion">
+
+            <?php
+            $c = ['create' => 'Create'];
+            $r = ['get' => 'Get'];
+            $u = ['update' => 'Update'];
+            $d = ['delete' => 'Delete'];
+            $crud = $c + $r + $u + $d
+            ?>
+
+            <?php $this->insert('partials/accordion-item', [
+                'key' => 'accounts',
+                'name' => 'Accounts',
+                'endpoints' => $crud + [
+                        'archive' => 'Archive',
+                        'add-attachment' => 'Add Attachment',
+                    ]
+            ]) ?>
+
+            <?php $this->insert('partials/accordion-item', [
+                'key' => 'bank-transactions',
+                'name' => 'Bank Transactions',
+                'endpoints' => $crud
+            ]) ?>
+
+            <?php $this->insert('partials/accordion-item', [
+                'key' => 'bank-transfers',
+                'name' => 'Bank Transfers',
+                'endpoints' => $c + $r
+            ]) ?>
+
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h5>Result</h5>
+
+        <br>
+
+        <div class="card">
+            <div class="card-header">Code</div>
+            <div class="card-body">
+                <pre id="function-location" class="text-info"></pre>
+                <pre><code id="function-body" class="php"></code></pre>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card">
+            <div class="card-header">Response</div>
+            <div class="card-body">
+                <pre><code id="payload-response" class="json"></code></pre>
+            </div>
+        </div>
+
+    </div>
 
 </div>
+
+<script type="application/javascript">
+
+    $(function () {
+
+        var $function_location = $('#function-location');
+        var $function_body = $('#function-body');
+        var $payload_response = $('#payload-response');
+
+        $('#endpoints-accordion').on('click', 'a.endpoint', function (e) {
+            e.preventDefault();
+
+            //These are all POST so browsers don't do any funny caching
+            $.post(this.getAttribute('href'), function (data) {
+                $function_location.html(data.function_location);
+                $function_body.html(data.function_body);
+                $payload_response.html(data.payload_response);
+
+                $('pre code').each(function () {
+                    hljs.highlightBlock(this);
+                });
+            });
+
+        });
+    });
+
+</script>
