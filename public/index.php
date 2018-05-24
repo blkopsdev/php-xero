@@ -1,16 +1,19 @@
 <?php
 /**
  * This file contains a very crude bootstrap and routing configuration
+ * Everything is currently in one file, but should be split out into providers
  */
 
 define('APP_ROOT', realpath(__DIR__ . '/../'));
 
-include APP_ROOT.'/vendor/autoload.php';
+include APP_ROOT . '/vendor/autoload.php';
 
+use App\Helper\XeroSessionStorage;
 use League\Container\ReflectionContainer;
 use League\Plates\Engine;
 use League\Route\RouteCollection;
 use League\Route\RouteGroup;
+use XeroPHP\Application\PublicApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
@@ -28,18 +31,51 @@ $container->delegate(new ReflectionContainer());
 
 //Share the template engine into controllers instantiated by the container
 $container->share(Engine::class, function () {
-    return new Engine(APP_ROOT.'/src/templates', 'phtml');
+    return new Engine(APP_ROOT . '/src/templates', 'phtml');
+});
+
+$container->share(XeroSessionStorage::class);
+
+// This is where the Xero application is instantiated.
+// This should happen wherever your services are registered
+$container->share(PublicApplication::class, function () use ($container) {
+    $config = include APP_ROOT . '/config/xero.php';
+    $application = new PublicApplication($config);
+
+    /** @var XeroSessionStorage $sessionStorage */
+    $sessionStorage = $container->get(XeroSessionStorage::class);
+
+    //If the session exists, register it on the application
+    if (null !== $session = $sessionStorage->getSession()) {
+        $application->getOAuthClient()
+            ->setToken($session->token)
+            ->setTokenSecret($session->token_secret);
+    }
+
+    return $application;
 });
 
 
+//Routes
 $collection = new RouteCollection($container);
 
+//This handles exceptions in HTML land
+$collection->setStrategy(new \App\Helper\CustomExceptionStrategy());
+
+$collection->get('/', '\App\Controller\ApplicationController::index');
+
 $collection->group('application', function (RouteGroup $group) {
-    $group->get('connect', '\App\Controller\ApplicationController::connect');
+    $controller = \App\Controller\ApplicationController::class;
+
+    $group->get('connect', "$controller::connect");
+    $group->post('connect', "$controller::connectRedirect");
+    $group->get('callback', "$controller::xeroCallback");
+    $group->get('disconnect', "$controller::disconnect");
 });
 
 
 $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+
 $response = $collection->dispatch($request, new Response());
 
 $emitter = new SapiEmitter();

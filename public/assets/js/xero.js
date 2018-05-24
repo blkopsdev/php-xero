@@ -104,8 +104,3 @@ function loadGet(appName, logoutUrl, currEndpoint, currAction) {
         populateAction($("#endpoint").val(), currAction);
     });
 }
-
-function loadIndex(appName, requestTokenUrl) {
-    var template = Handlebars.getTemplate('index');
-    document.querySelector("#req").innerHTML = template(data);
-}

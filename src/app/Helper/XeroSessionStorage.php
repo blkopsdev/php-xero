@@ -57,14 +57,22 @@ class XeroSessionStorage
             $expires = time() + intval($expires);
         }
 
-        $_SESSION[self::SESSION_KEY] = new \ArrayObject([
+        $_SESSION[self::SESSION_KEY] = (object)[
             'token' => $token,
             'token_secret' => $secret,
             'expires' => $expires
-        ]);
+        ];
     }
 
 
-
+    /**
+     * Clears any existing session
+     */
+    function deleteSession()
+    {
+        if (isset($_SESSION[self::SESSION_KEY])) {
+            unset($_SESSION[self::SESSION_KEY]);
+        }
+    }
 
 }

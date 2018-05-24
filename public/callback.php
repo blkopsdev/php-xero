@@ -18,7 +18,7 @@
 		    ],
 	    'curl' => [
 	        CURLOPT_USERAGENT   => 'xero-php sample app',
-	        CURLOPT_CAINFO => __DIR__.'/certs/ca-bundle.crt',
+	        CURLOPT_CAINFO => __DIR__ . '/certs/ca-bundle.crt',
 	    ],
 	];
 	
