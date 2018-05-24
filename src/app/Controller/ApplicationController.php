@@ -8,6 +8,8 @@ namespace App\Controller;
 
 use App\Helper\XeroSessionStorage;
 use League\Plates\Engine;
+use League\Route\RouteCollection;
+use League\Route\RouteGroup;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use XeroPHP\Application\PublicApplication;
@@ -35,6 +37,25 @@ class ApplicationController extends BaseController
     {
         parent::__construct($plates, $xero);
         $this->xeroSessionStorage = $xeroSessionStorage;
+    }
+
+    /**
+     * Register the routes for this controller
+     *
+     * @param RouteCollection $collection
+     */
+    public static function registerRoutes(RouteCollection $collection)
+    {
+        $controller = self::class;
+
+        $collection->get('/', "$controller::index");
+        $collection->group('application', function (RouteGroup $group) use($controller){
+
+            $group->get('connect', "$controller::connect");
+            $group->post('connect', "$controller::connectRedirect");
+            $group->get('callback', "$controller::xeroCallback");
+            $group->get('disconnect', "$controller::disconnect");
+        });
     }
 
     /**

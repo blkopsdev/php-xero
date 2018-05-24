@@ -62,22 +62,9 @@ $collection = new RouteCollection($container);
 //This handles exceptions in HTML land
 $collection->setStrategy(new \App\Helper\CustomExceptionStrategy());
 
-$collection->get('/', '\App\Controller\ApplicationController::index');
+\App\Controller\ApplicationController::registerRoutes($collection);
+\App\Controller\AccountsController::registerRoutes($collection);
 
-$collection->group('application', function (RouteGroup $group) {
-    $controller = \App\Controller\ApplicationController::class;
-
-    $group->get('connect', "$controller::connect");
-    $group->post('connect', "$controller::connectRedirect");
-    $group->get('callback', "$controller::xeroCallback");
-    $group->get('disconnect', "$controller::disconnect");
-});
-
-$collection->group('accounts', function (RouteGroup $group) {
-    $controller = \App\Controller\AccountsController::class;
-
-    $group->post('get', "$controller::get");
-});
 
 $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 

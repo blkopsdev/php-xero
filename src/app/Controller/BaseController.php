@@ -86,6 +86,12 @@ abstract class BaseController
     }
 
 
+    /**
+     * This restores the original class name int he dump
+     *
+     * @param $payload_data
+     * @return mixed
+     */
     private static function convertPayloadToString($payload_data)
     {
         $initial = print_r(self::reduceXeroEntities($payload_data), true);
@@ -106,6 +112,12 @@ abstract class BaseController
     }
 
 
+    /**
+     * As the Xero objects are containers, they need to have their properties pulled out (recursively)
+     *
+     * @param $input
+     * @return array|\stdClass
+     */
     private static function reduceXeroEntities($input)
     {
         if ($input instanceof Model) {

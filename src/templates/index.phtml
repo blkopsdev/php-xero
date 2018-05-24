@@ -48,7 +48,7 @@
             <div class="card-header">Code</div>
             <div class="card-body">
                 <pre id="function-location" class="text-info"></pre>
-                <pre><code id="function-body" class="php"></code></pre>
+                <pre><code id="function-body" class="php">no requests have been made</code></pre>
             </div>
         </div>
 
@@ -57,7 +57,7 @@
         <div class="card">
             <div class="card-header">Response</div>
             <div class="card-body">
-                <pre><code id="payload-response" class="json"></code></pre>
+                <pre><code id="payload-response" class="puppet">no requests have been made</code></pre>
             </div>
         </div>
 
@@ -77,15 +77,19 @@
             e.preventDefault();
 
             //These are all POST so browsers don't do any funny caching
-            $.post(this.getAttribute('href'), function (data) {
-                $function_location.html(data.function_location);
-                $function_body.html(data.function_body);
-                $payload_response.html(data.payload_response);
+            $.post(this.getAttribute('href'))
+                .done(function (data) {
+                    $function_location.html(data.function_location);
+                    $function_body.html(data.function_body);
+                    $payload_response.html(data.payload_response);
 
-                $('pre code').each(function () {
-                    hljs.highlightBlock(this);
+                    $('pre code').each(function () {
+                        hljs.highlightBlock(this);
+                    });
+                })
+                .fail(function (error) {
+                    console.log(error);
                 });
-            });
 
         });
     });
