@@ -1,0 +1,19 @@
+<div class="card">
+    <div class="card-header">
+        <button class="btn btn-link"
+                data-toggle="collapse"
+                data-target="#collapse-<?= $key ?>"
+                aria-controls="collapse-<?= $key ?>"
+                aria-expanded="true">
+            <?= $this->e($name) ?>
+        </button>
+    </div>
+
+    <div id="collapse-<?= $key ?>" class="collapse" data-parent="#endpoints-accordion">
+        <div class="card-body">
+            <?php foreach ($endpoints as $endpoint_key => $endpoint_name): ?>
+                <div><a href="<?= $key ?>/<?= $endpoint_key ?>"><?= $endpoint_name ?></a></div>
+            <? endforeach; ?>
+        </div>
+    </div>
+</div>
