@@ -1,12 +1,60 @@
+h5 {
+    text-transform: uppercase;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
 #endpoints-accordion .card-header {
     padding: .3rem .75rem;
     border-bottom: none;
 }
 
-#endpoints-accordion .card:not(:first-child){
+#endpoints-accordion .card:not(:first-child) {
     border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#endpoints-accordion .card:not(:last-child) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 #endpoints-accordion .card-body {
-    border-top: 1px solid rgba(0,0,0,.125);
+    border-top: 1px solid rgba(0, 0, 0, .125);
+}
+
+#endpoints-accordion .badge {
+    padding:0.4rem;
+    margin:0.2rem;
+}
+
+.endpoint-control {
+    padding: .3rem .75rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, .03);
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: calc(.25rem - 1px);
+}
+
+.endpoint-control div:not(:empty)::after {
+    content: '/';
+    padding-left: 1rem;
+    color: #333;
+}
+
+.endpoint-control span  {
+    margin: 0.4rem;
+}
+
+.endpoint-control a {
+    display: none;
+}
+
+.endpoint-control input {
+    height: 1.5rem;
+    margin: 0.6rem 0 0 0.5rem;
+    width: 22rem;
+    font-family: monospace, serif;
+    display: none;
 }

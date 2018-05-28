@@ -9,10 +9,18 @@
         </button>
     </div>
 
-    <div id="collapse-<?= $key ?>" class="collapse" data-parent="#endpoints-accordion">
+    <?php $map=['create' => 'primary', 'get' => 'success', 'update' => 'warning', 'delete' => 'danger']; ?>
+
+    <div id="collapse-<?= $key ?>" class="object collapse<?= $open ? ' show' : '' ?>" data-parent="#endpoints-accordion">
         <div class="card-body">
             <?php foreach ($endpoints as $endpoint_key => $endpoint_name): ?>
-                <div><a class="endpoint" href="<?= $key ?>/<?= $endpoint_key ?>"><?= $endpoint_name ?></a></div>
+                <div>
+                    <a class="endpoint badge badge-<?= $map[$endpoint_key] ?: 'secondary' ?>" href="#"
+                       data-object-key="<?= $key ?>"
+                       data-object-name="<?= $name ?>"
+                       data-method-key="<?= $endpoint_key ?>"
+                       data-method-name="<?= $endpoint_name ?>"><?= $endpoint_name ?></a>
+                </div>
             <? endforeach; ?>
         </div>
     </div>

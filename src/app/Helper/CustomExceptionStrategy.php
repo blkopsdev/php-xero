@@ -32,6 +32,18 @@ class CustomExceptionStrategy extends ApplicationStrategy
         // allow accessing via container so the exception message can't be displayed
         // nicely. Not ideal code duplication here, not not a lot of options
         return function (RequestInterface $request, ResponseInterface $response) use ($e, $code) {
+
+            //Handle JSON responses
+            if (in_array('application/json', $request->getHeader('accept'))) {
+                $response->getBody()->write(json_encode([
+                    'status_code' => $code,
+                    'message' => $e->getMessage()
+                ]));
+
+                return $response->withHeader('Content-Type', 'application/json')->withStatus($code);
+            }
+
+
             $plates = new Engine(APP_ROOT . '/src/templates', 'phtml');
 
             $response->getBody()->write(

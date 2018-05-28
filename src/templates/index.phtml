@@ -4,7 +4,6 @@
 
     <div class="endpoints col-md-3">
         <h5>Endpoints</h5>
-        <br>
         <div id="endpoints-accordion">
 
             <?php
@@ -12,43 +11,57 @@
             $r = ['get' => 'Get'];
             $u = ['update' => 'Update'];
             $d = ['delete' => 'Delete'];
-            $crud = $c + $r + $u + $d
-            ?>
+            $crud = $c + $r + $u + $d;
 
-            <?php $this->insert('partials/accordion-item', [
+            $this->insert('partials/accordion-item', [
+                'open' => true,
                 'key' => 'accounts',
                 'name' => 'Accounts',
                 'endpoints' => $crud + [
                         'archive' => 'Archive',
                         'add-attachment' => 'Add Attachment',
                     ]
-            ]) ?>
+            ]);
 
-            <?php $this->insert('partials/accordion-item', [
+            $this->insert('partials/accordion-item', [
                 'key' => 'bank-transactions',
                 'name' => 'Bank Transactions',
                 'endpoints' => $crud
-            ]) ?>
+            ]);
 
-            <?php $this->insert('partials/accordion-item', [
+            $this->insert('partials/accordion-item', [
                 'key' => 'bank-transfers',
                 'name' => 'Bank Transfers',
                 'endpoints' => $c + $r
-            ]) ?>
+            ]);
+
+            ?>
 
         </div>
     </div>
 
     <div class="col-md-9">
-        <h5>Result</h5>
+        <h5>Request</h5>
+
+        <div class="d-flex endpoint-control">
+            <div class="p-2 object"></div>
+            <div class="p-2 method"></div>
+
+            <input id="guid-input" type="text" title="Enter a GUID" max="36"/>
+            <span class="p-2">
+                <a href="#" class="badge badge-primary" id="add-guid">+ Add GUID</a>
+            </span>
+
+            <button class="btn btn-primary ml-auto" type="submit">Run</button>
+        </div>
 
         <br>
 
         <div class="card">
             <div class="card-header">Code</div>
             <div class="card-body">
-                <pre id="function-location" class="text-info"></pre>
-                <pre><code id="function-body" class="php">no requests have been made</code></pre>
+                <pre class="function-location text-info"></pre>
+                <pre><code class="function-body php">no requests have been made</code></pre>
             </div>
         </div>
 
@@ -56,8 +69,8 @@
 
         <div class="card">
             <div class="card-header">Response</div>
-            <div class="card-body">
-                <pre><code id="payload-response" class="puppet">no requests have been made</code></pre>
+            <div class="card-body danger">
+                <pre><code class="payload-response">no requests have been made</code></pre>
             </div>
         </div>
 
@@ -69,15 +82,40 @@
 
     $(function () {
 
-        var $function_location = $('#function-location');
-        var $function_body = $('#function-body');
-        var $payload_response = $('#payload-response');
+        var $function_location = $('.function-location');
+        var $function_body = $('.function-body');
+        var $payload_response = $('.payload-response');
+        var $endpoint = $('.endpoint-control');
+        var $guid = $('#guid-input');
+
+        $('#add-guid').click(function () {
+            $(this).hide();
+            $guid.show();
+        });
 
         $('#endpoints-accordion').on('click', 'a.endpoint', function (e) {
             e.preventDefault();
 
+            $('#add-guid').show();
+            $guid.val('').hide();
+
+            $endpoint.find('.object').html(this.getAttribute('data-object-name'));
+            $endpoint.find('.method').html(this.getAttribute('data-method-name'));
+            $endpoint.find('button').attr('data-endpoint', '/' + this.getAttribute('data-object-key') + '/' + this.getAttribute('data-method-key'));
+
+        });
+
+
+        $('button[type="submit"]').click(function () {
             //These are all POST so browsers don't do any funny caching
-            $.post(this.getAttribute('href'))
+            var endpoint = this.getAttribute('data-endpoint');
+
+            //If a GUID has been supplied, add it to the url
+            if($guid.val()){
+                endpoint += '/' + $guid.val();
+            }
+
+            $.ajax(endpoint, { headers: { Accept: "application/json"}, method: 'post' })
                 .done(function (data) {
                     $function_location.html(data.function_location);
                     $function_body.html(data.function_body);
@@ -86,12 +124,15 @@
                     $('pre code').each(function () {
                         hljs.highlightBlock(this);
                     });
+                    $payload_response.parents('.card').addClass('border-success').removeClass('border-danger');
                 })
                 .fail(function (error) {
-                    console.log(error);
+                    $payload_response.html(error.responseJSON.message);
+                    $payload_response.parents('.card').removeClass('border-success').addClass('border-danger');
                 });
-
         });
+
+
     });
 
 </script>

@@ -8,11 +8,12 @@ define('APP_ROOT', realpath(__DIR__ . '/../'));
 
 include APP_ROOT . '/vendor/autoload.php';
 
+use App\Helper\CustomExceptionStrategy;
 use App\Helper\XeroSessionStorage;
 use League\Container\ReflectionContainer;
 use League\Plates\Engine;
 use League\Route\RouteCollection;
-use League\Route\RouteGroup;
+use League\Route\Strategy\JsonStrategy;
 use XeroPHP\Application\PublicApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -59,8 +60,8 @@ $container->share(PublicApplication::class, function () use ($container) {
 //Routes
 $collection = new RouteCollection($container);
 
-//This handles exceptions in HTML land
-$collection->setStrategy(new \App\Helper\CustomExceptionStrategy());
+//Overload the exception handling
+$collection->setStrategy(new CustomExceptionStrategy());
 
 \App\Controller\ApplicationController::registerRoutes($collection);
 \App\Controller\AccountsController::registerRoutes($collection);

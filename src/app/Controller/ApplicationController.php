@@ -6,6 +6,7 @@
 
 namespace App\Controller;
 
+use App\Helper\CustomExceptionStrategy;
 use App\Helper\XeroSessionStorage;
 use League\Plates\Engine;
 use League\Route\RouteCollection;
