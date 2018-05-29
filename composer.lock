@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "67c6c61a9c9185ee0a36c5ef52fa5598",
+    "content-hash": "40ead11403fb73e1b75ec45ec4228501",
     "packages": [
         {
             "name": "calcinai/xero-php",
-            "version": "v1.7.0",
+            "version": "v1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/calcinai/xero-php.git",
-                "reference": "82e95c877c5621439bcaef08ccdab96a43cfeda2"
+                "reference": "8fb365a785d3272fa79eb0cd418987aa84bf3904"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/calcinai/xero-php/zipball/82e95c877c5621439bcaef08ccdab96a43cfeda2",
-                "reference": "82e95c877c5621439bcaef08ccdab96a43cfeda2",
+                "url": "https://api.github.com/repos/calcinai/xero-php/zipball/8fb365a785d3272fa79eb0cd418987aa84bf3904",
+                "reference": "8fb365a785d3272fa79eb0cd418987aa84bf3904",
                 "shasum": ""
             },
             "require": {
@@ -42,7 +42,7 @@
             ],
             "description": "A client implementation of the Xero API, with a cleaner OAuth interface and ORM-like abstraction.",
             "homepage": "https://github.com/calcinai/xero-php",
-            "time": "2018-01-22T08:05:01+00:00"
+            "time": "2018-05-29T04:00:05+00:00"
         },
         {
             "name": "container-interop/container-interop",
