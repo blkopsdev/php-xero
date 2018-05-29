@@ -89,7 +89,7 @@ We couldn't find a way to demonstrate the following actions with the xero-php SD
 
 ## Acknowledgement
 
-Special thanks to [Michael Calcinai](https://github.com/calcinai) for all his work on the [xero-php](https://github.com/calcinai/xero-php) SDK
+Special thanks to [Michael Calcinai](https://github.com/calcinai) for all his work on the [xero-php](https://github.com/calcinai/xero-php) SDK. Small change
   
 
 ## License
