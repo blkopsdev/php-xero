@@ -11,6 +11,7 @@ use League\Route\Http\Exception\NotFoundException;
 use League\Route\Strategy\ApplicationStrategy;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response\JsonResponse;
 
 class CustomExceptionStrategy extends ApplicationStrategy
 {
@@ -35,12 +36,10 @@ class CustomExceptionStrategy extends ApplicationStrategy
 
             //Handle JSON responses
             if (in_array('application/json', $request->getHeader('accept'))) {
-                $response->getBody()->write(json_encode([
+                return new JsonResponse([
                     'status_code' => $code,
                     'message' => $e->getMessage()
-                ]));
-
-                return $response->withHeader('Content-Type', 'application/json')->withStatus($code);
+                ], $code);
             }
 
 

@@ -43,19 +43,21 @@
     <div class="col-md-9">
         <h5>Request</h5>
 
-        <div class="d-flex endpoint-control">
-            <div class="p-2 object"></div>
-            <div class="p-2 method"></div>
+        <div class="align-items-center endpoint-control">
+            <span class="badge badge-primary object"></span>
+            <span class="divider">/</span>
+            <span class="badge badge-primary method"></span>
+            <span class="divider">/</span>
 
-            <input id="guid-input" type="text" title="Enter a GUID" max="36"/>
-            <span class="p-2">
-                <a href="#" class="badge badge-primary" id="add-guid">+ Add GUID</a>
-            </span>
+            <input id="guid-input" type="text" title="Enter a GUID" maxlength="36" />
+            <a href="#" class="badge badge-light" id="add-guid" style="text-transform: inherit">+ Add GUID</a>
 
-            <button class="btn btn-primary ml-auto" type="submit">Run</button>
+            <div class="ml-auto">
+                <a href="#" class="badge badge-primary" id="run-endpoint">Run</a>
+            </div>
         </div>
 
-        <br>
+        <hr>
 
         <div class="card">
             <div class="card-header">Code</div>
@@ -87,43 +89,49 @@
         var $payload_response = $('.payload-response');
         var $endpoint = $('.endpoint-control');
         var $guid = $('#guid-input');
+        var $run_button = $('#run-endpoint');
 
-        $('#add-guid').click(function () {
-            $(this).hide();
+        var $add_guid = $('#add-guid').click(function () {
+            $add_guid.hide();
             $guid.show();
         });
 
-        $('#endpoints-accordion').on('click', 'a.endpoint', function (e) {
+        $('#endpoints-accordion').on('click', 'a.method', function (e) {
             e.preventDefault();
 
-            $('#add-guid').show();
+            $add_guid.show();
             $guid.val('').hide();
 
             $endpoint.find('.object').html(this.getAttribute('data-object-name'));
-            $endpoint.find('.method').html(this.getAttribute('data-method-name'));
-            $endpoint.find('button').attr('data-endpoint', '/' + this.getAttribute('data-object-key') + '/' + this.getAttribute('data-method-key'));
+            $endpoint.find('.method').html(this.getAttribute('data-method-name'))
+                .get(0).className = this.className; //Copy styles over
+
+            //Show controls
+            if(!$endpoint.hasClass('d-flex')){
+                $endpoint.addClass('d-flex');
+            }
+
+            $run_button.attr('data-endpoint', '/' + this.getAttribute('data-object-key') + '/' + this.getAttribute('data-method-key'));
 
         });
 
 
-        $('button[type="submit"]').click(function () {
+        $run_button.click(function (e) {
+            e.preventDefault();
             //These are all POST so browsers don't do any funny caching
             var endpoint = this.getAttribute('data-endpoint');
 
             //If a GUID has been supplied, add it to the url
-            if($guid.val()){
+            if ($guid.val()) {
                 endpoint += '/' + $guid.val();
             }
 
-            $.ajax(endpoint, { headers: { Accept: "application/json"}, method: 'post' })
+            $.ajax(endpoint, {headers: {Accept: "application/json"}, method: 'post'})
                 .done(function (data) {
                     $function_location.html(data.function_location);
-                    $function_body.html(data.function_body);
-                    $payload_response.html(data.payload_response);
+                    $function_body.html(hljs.highlightAuto(data.function_body).value);
+                    $payload_response.html(hljs.highlightAuto(data.payload_response).value);
 
-                    $('pre code').each(function () {
-                        hljs.highlightBlock(this);
-                    });
                     $payload_response.parents('.card').addClass('border-success').removeClass('border-danger');
                 })
                 .fail(function (error) {

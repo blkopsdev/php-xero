@@ -46,7 +46,7 @@ abstract class BaseController
      * @return ResponseInterface
      * @throws \Exception
      */
-    protected function jsonCodeResponse(ResponseInterface $response, $payload_data, $http_code)
+    protected function jsonCodeResponse(ResponseInterface $response, $payload_data, $http_code = 200)
     {
         //Get calling function
         list(, $caller) = debug_backtrace(false);
@@ -62,12 +62,12 @@ abstract class BaseController
         $file = new \SplFileObject($filename);
         $file->seek($start_line);
 
-        $function_body = "&lt;?php\n";
+        $function_body = "<?php\n";
         while ($file->key() < $end_line) {
             $function_body .= $file->getCurrentLine();
         }
         //Ensure a consistent ending
-        $function_body = rtrim($function_body) . "\n?&gt;";
+        $function_body = rtrim($function_body) . "\n?>";
 
         //This is all a little messy, but does the job
         $response->getBody()->write(json_encode([

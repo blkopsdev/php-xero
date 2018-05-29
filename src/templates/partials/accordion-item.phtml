@@ -15,7 +15,7 @@
         <div class="card-body">
             <?php foreach ($endpoints as $endpoint_key => $endpoint_name): ?>
                 <div>
-                    <a class="endpoint badge badge-<?= $map[$endpoint_key] ?: 'secondary' ?>" href="#"
+                    <a class="method badge badge-<?= $map[$endpoint_key] ?: 'secondary' ?>" href="#"
                        data-object-key="<?= $key ?>"
                        data-object-name="<?= $name ?>"
                        data-method-key="<?= $endpoint_key ?>"
