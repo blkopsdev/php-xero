@@ -11,6 +11,7 @@ use League\Route\Http\Exception\NotFoundException;
 use League\Route\Strategy\ApplicationStrategy;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use XeroPHP\Exception;
 use Zend\Diactoros\Response\JsonResponse;
 
 class CustomExceptionStrategy extends ApplicationStrategy
@@ -23,7 +24,13 @@ class CustomExceptionStrategy extends ApplicationStrategy
 
     public function getExceptionDecorator(\Exception $exception)
     {
-        return $this->getExceptionResponse($exception, 500);
+        if ($exception instanceof Exception && $exception >= 100 && $exception <= 500) {
+            $code = $exception->getCode();
+        } else {
+            $code = 500;
+        }
+
+        return $this->getExceptionResponse($exception, $code);
     }
 
 

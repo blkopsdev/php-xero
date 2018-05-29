@@ -98,65 +98,6 @@
 		<?php
 			switch($endpoint)
 			{
-			    case "Accounts":
-				    switch($action)
-					{
-				    	case "Create":
-				        echo $ex->createAccount($xero);
-				        break;
-				        case "Read":
-				        echo $ex->getAccount($xero);
-				        break;
-				        case "Update":
-				        echo $ex->updateAccount($xero);
-				    	break;
-				    	case "Delete":
-				        echo $ex->deleteAccount($xero);
-				    	break;
-				    	case "Archive":
-				        echo $ex->archiveAccount($xero);
-				    	break;
-				    	case "Attachment":
-				        echo $ex->attachmentAccount($xero);
-				    	break;
-				    	default:
-					    echo $action . " action not supported in API";
-				    }
-			    break;
-
-			    case "BankTransactions":
-				    switch($action)
-					{
-				    	case "Create":
-				        echo $ex->createBankTransaction($xero);
-				        break;
-				        case "Read":
-				        echo $ex->getBankTransaction($xero);
-				        break;
-				        case "Update":
-				        echo $ex->updateBankTransaction($xero);
-				    	break;
-				    	case "Delete":
-				        echo $ex->deleteBankTransaction($xero);
-				    	break;
-				    	default:
-					    echo $action . " action not supported in API";
-				    }
-				 break;
-
-				 case "BankTransfers":
-				    switch($action)
-					{
-				    	case "Create":
-				        echo $ex->createBankTransfer($xero);
-				        break;
-				        case "Read":
-				        echo $ex->getBankTransfer($xero);
-				        break;
-				        default:
-					    echo $action . " action not supported in API";
-				    }
-				 break;
 
 				 case "BrandingThemes":
 				    switch($action)

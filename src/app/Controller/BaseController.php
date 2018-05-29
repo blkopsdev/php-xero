@@ -6,8 +6,10 @@
 
 namespace App\Controller;
 
+use App\Helper\XeroTestObjects;
 use League\Plates\Engine;
 use Psr\Http\Message\ResponseInterface;
+use XeroPHP\Application;
 use XeroPHP\Application\PublicApplication;
 use App\Helper\Strings;
 use XeroPHP\Remote\Collection;
@@ -27,14 +29,19 @@ abstract class BaseController
     protected $plates;
 
     /**
-     * @var PublicApplication
+     * @var Application
      */
     protected $xero;
+    /**
+     * @var XeroTestObjects
+     */
+    protected $xeroTestObjects;
 
-    public function __construct(Engine $plates, PublicApplication $xero)
+    public function __construct(Engine $plates, Application $xero, XeroTestObjects $xeroTestObjects)
     {
         $this->plates = $plates;
         $this->xero = $xero;
+        $this->xeroTestObjects = $xeroTestObjects;
     }
 
     /**

@@ -6,14 +6,14 @@
 
 namespace App\Controller;
 
-use App\Helper\CustomExceptionStrategy;
 use App\Helper\XeroSessionStorage;
+use App\Helper\XeroTestObjects;
 use League\Plates\Engine;
 use League\Route\RouteCollection;
 use League\Route\RouteGroup;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use XeroPHP\Application\PublicApplication;
+use Psr\Http\Message\ServerRequestInterface;
+use XeroPHP\Application;
 use XeroPHP\Models\Accounting\Organisation;
 use XeroPHP\Remote\Request;
 use XeroPHP\Remote\URL;
@@ -21,7 +21,6 @@ use Zend\Diactoros\Response\RedirectResponse;
 
 class ApplicationController extends BaseController
 {
-
     /**
      * @var XeroSessionStorage
      */
@@ -31,12 +30,17 @@ class ApplicationController extends BaseController
      * This overrides the base controller so the Xero session is injected
      *
      * @param Engine $plates
-     * @param PublicApplication $xero
+     * @param Application $xero
+     * @param XeroTestObjects $xeroTestObjects
      * @param XeroSessionStorage $xeroSessionStorage
      */
-    public function __construct(Engine $plates, PublicApplication $xero, XeroSessionStorage $xeroSessionStorage)
-    {
-        parent::__construct($plates, $xero);
+    public function __construct(
+        Engine $plates,
+        Application $xero,
+        XeroTestObjects $xeroTestObjects,
+        XeroSessionStorage $xeroSessionStorage
+    ) {
+        parent::__construct($plates, $xero, $xeroTestObjects);
         $this->xeroSessionStorage = $xeroSessionStorage;
     }
 
@@ -50,7 +54,7 @@ class ApplicationController extends BaseController
         $controller = self::class;
 
         $collection->get('/', "$controller::index");
-        $collection->group('application', function (RouteGroup $group) use($controller){
+        $collection->group('application', function (RouteGroup $group) use ($controller) {
 
             $group->get('connect', "$controller::connect");
             $group->post('connect', "$controller::connectRedirect");

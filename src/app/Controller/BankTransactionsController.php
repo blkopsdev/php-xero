@@ -13,8 +13,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use XeroPHP\Models\Accounting\Account;
 use XeroPHP\Models\Accounting\Attachment;
+use XeroPHP\Models\Accounting\BankTransaction;
+use XeroPHP\Models\Accounting\Contact;
 
-class AccountsController extends BaseController
+class BankTransactionsController extends BaseController
 {
     /**
      * Register the routes for this controller
@@ -23,15 +25,13 @@ class AccountsController extends BaseController
      */
     public static function registerRoutes(RouteCollection $collection)
     {
-        $collection->group('accounts', function (RouteGroup $group) {
+        $collection->group('bank-transactions', function (RouteGroup $group) {
             $controller = self::class;
 
             $group->post('create', "$controller::create");
             $group->post('get', "$controller::get");
             $group->post('get/{guid:uuid}', "$controller::getByGUID");
             $group->post('update', "$controller::update");
-            $group->post('delete', "$controller::delete");
-            $group->post('archive', "$controller::archive");
             $group->post('add-attachment', "$controller::addAttachment");
         });
     }
@@ -45,17 +45,34 @@ class AccountsController extends BaseController
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $code = Strings::random_number();
+        //Fetch a contact and pick the first one
+        $contact = $this->xero->load(Contact::class)->first();
 
-        $account = new Account($this->xero);
-        $account->setName('Sales-' . $code)
-            ->setCode($code)
-            ->setDescription("This is my original description.")
-            ->setType(Account::ACCOUNT_TYPE_REVENUE);
-        $account->save();
+        //Fetch an account bank account to get a valid code
+        //this would probably be stored in your application
+        $account = $this->xero->load(Account::class)
+            ->where('Type', Account::ACCOUNT_TYPE_BANK)
+            ->first();
 
+        $bankAccount = (new BankTransaction\BankAccount())
+            ->setAccountID($account->AccountID);
 
-        return $this->jsonCodeResponse($response, $account, 201);
+        $lineItem = new BankTransaction\LineItem($this->xero);
+        $lineItem->setDescription('Some item')
+            ->setUnitAmount(100.00)
+            ->setAccountCode('400');
+
+        $bankTransaction = new BankTransaction($this->xero);
+        $bankTransaction->setReference('Ref-' . Strings::random_number())
+            ->setDate(new \DateTime('2017-01-02'))
+            ->setType(BankTransaction::TYPE_RECEIVE)
+            ->setBankAccount($bankAccount)
+            ->setContact($contact)
+            ->addLineItem($lineItem)
+            ->setLineAmountType('Exclusive');
+        $bankTransaction->save();
+
+        return $this->jsonCodeResponse($response, $bankTransaction, 201);
     }
 
     /**
@@ -66,11 +83,12 @@ class AccountsController extends BaseController
      */
     public function get(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $accounts = $this->xero->load(Account::class)
-            ->where('Type', Account::ACCOUNT_TYPE_BANK)
+        $bankTransactions = $this->xero->load(BankTransaction::class)
+            ->where('Status', BankTransaction::BANK_TRANSACTION_STATUS_AUTHORISED)
+            ->where('Type', BankTransaction::TYPE_RECEIVE)
             ->execute();
 
-        return $this->jsonCodeResponse($response, $accounts);
+        return $this->jsonCodeResponse($response, $bankTransactions);
     }
 
     /**
@@ -81,7 +99,7 @@ class AccountsController extends BaseController
      */
     public function getByGUID(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $account = $this->xero->loadByGUID(Account::class, $args['guid']);
+        $account = $this->xero->loadByGUID(BankTransaction::class, $args['guid']);
 
         return $this->jsonCodeResponse($response, $account);
     }
@@ -96,44 +114,11 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
-        $account->setDescription('My updated description');
-        $account->save();
+        $bankTransaction = $this->xeroTestObjects->getBankTransaction();
+        $bankTransaction->setReference('My updated reference');
+        $bankTransaction->save();
 
-        return $this->jsonCodeResponse($response, $account);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     * @throws \Exception
-     */
-    public function delete(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        // In a real-world case, you'd be loading the from Xero
-        // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
-        $account->delete();
-
-        return $this->jsonCodeResponse($response, $account);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     * @throws \Exception
-     */
-    public function archive(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        // In a real-world case, you'd be loading the from Xero
-        // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
-        $account->setStatus(Account::ACCOUNT_STATUS_ARCHIVED);
-        $account->save();
-
-        return $this->jsonCodeResponse($response, $account);
+        return $this->jsonCodeResponse($response, $bankTransaction);
     }
 
     /**
@@ -146,31 +131,12 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
+        $bankTransaction = $this->xeroTestObjects->getBankTransaction();
 
         $attachment = Attachment::createFromLocalFile(APP_ROOT . '/data/helo-heroes.jpg');
-        $account->addAttachment($attachment);
+        $bankTransaction->addAttachment($attachment);
 
-        return $this->jsonCodeResponse($response, ['$account' => $account, '$attachment' => $attachment]);
+        return $this->jsonCodeResponse($response, ['$bankTransaction' => $bankTransaction, '$attachment' => $attachment]);
     }
 
-    /**
-     * Create a test object for updates and deletes
-     *
-     * @return Account
-     * @throws \XeroPHP\Remote\Exception
-     */
-    private function getTestAccount()
-    {
-        $code = Strings::random_number();
-
-        $account = new Account($this->xero);
-        $account->setName('Sales-' . $code)
-            ->setCode($code)
-            ->setDescription("This is my original description.")
-            ->setType(Account::ACCOUNT_TYPE_REVENUE);
-        $account->save();
-
-        return $account;
-    }
 }

@@ -11,28 +11,27 @@
             $r = ['get' => 'Get'];
             $u = ['update' => 'Update'];
             $d = ['delete' => 'Delete'];
+            $archive = ['archive' => 'Archive'];
+            $attachment = ['add-attachment' => 'Add Attachment'];
             $crud = $c + $r + $u + $d;
 
             $this->insert('partials/accordion-item', [
                 'open' => true,
                 'key' => 'accounts',
                 'name' => 'Accounts',
-                'endpoints' => $crud + [
-                        'archive' => 'Archive',
-                        'add-attachment' => 'Add Attachment',
-                    ]
+                'endpoints' => $crud + $archive + $attachment
             ]);
 
             $this->insert('partials/accordion-item', [
                 'key' => 'bank-transactions',
                 'name' => 'Bank Transactions',
-                'endpoints' => $crud
+                'endpoints' => $c + $r + $u + $attachment
             ]);
 
             $this->insert('partials/accordion-item', [
                 'key' => 'bank-transfers',
                 'name' => 'Bank Transfers',
-                'endpoints' => $c + $r
+                'endpoints' => $c + $r + $attachment
             ]);
 
             ?>
@@ -49,11 +48,11 @@
             <span class="badge badge-primary method"></span>
             <span class="divider">/</span>
 
-            <input id="guid-input" type="text" title="Enter a GUID" maxlength="36" />
+            <input id="guid-input" type="text" title="Enter a GUID" maxlength="36"/>
             <a href="#" class="badge badge-light" id="add-guid" style="text-transform: inherit">+ Add GUID</a>
 
             <div class="ml-auto">
-                <a href="#" class="badge badge-primary" id="run-endpoint">Run</a>
+                <button class="btn btn-primary" id="run-endpoint">Make Request</button>
             </div>
         </div>
 
@@ -91,7 +90,8 @@
         var $guid = $('#guid-input');
         var $run_button = $('#run-endpoint');
 
-        var $add_guid = $('#add-guid').click(function () {
+        var $add_guid = $('#add-guid').click(function (e) {
+            e.preventDefault();
             $add_guid.hide();
             $guid.show();
         });
@@ -107,7 +107,7 @@
                 .get(0).className = this.className; //Copy styles over
 
             //Show controls
-            if(!$endpoint.hasClass('d-flex')){
+            if (!$endpoint.hasClass('d-flex')) {
                 $endpoint.addClass('d-flex');
             }
 
@@ -126,6 +126,8 @@
                 endpoint += '/' + $guid.val();
             }
 
+            $run_button.attr('disabled', true);
+
             $.ajax(endpoint, {headers: {Accept: "application/json"}, method: 'post'})
                 .done(function (data) {
                     $function_location.html(data.function_location);
@@ -133,10 +135,16 @@
                     $payload_response.html(hljs.highlightAuto(data.payload_response).value);
 
                     $payload_response.parents('.card').addClass('border-success').removeClass('border-danger');
+                    $run_button.attr('disabled', false);
                 })
                 .fail(function (error) {
+                    if (error.responseJSON.status_code === 401) {
+                        alert('Session expired');
+                    }
+
                     $payload_response.html(error.responseJSON.message);
                     $payload_response.parents('.card').removeClass('border-success').addClass('border-danger');
+                    $run_button.attr('disabled', false);
                 });
         });
 

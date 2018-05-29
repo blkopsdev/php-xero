@@ -6,17 +6,17 @@
 
 namespace App\Controller;
 
-use App\Helper\Strings;
 use League\Route\RouteCollection;
 use League\Route\RouteGroup;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use XeroPHP\Models\Accounting\Account;
 use XeroPHP\Models\Accounting\Attachment;
-use XeroPHP\Models\Accounting\BankTransaction;
-use XeroPHP\Models\Accounting\Contact;
+use XeroPHP\Models\Accounting\BankTransfer;
+use XeroPHP\Models\Accounting\BankTransfer\FromBankAccount;
+use XeroPHP\Models\Accounting\BankTransfer\ToBankAccount;
 
-class BankTransactionsController extends BaseController
+class BankTransfersController extends BaseController
 {
     /**
      * Register the routes for this controller
@@ -25,17 +25,15 @@ class BankTransactionsController extends BaseController
      */
     public static function registerRoutes(RouteCollection $collection)
     {
-        $collection->group('bank-transactions', function (RouteGroup $group) {
+        $collection->group('bank-transfers', function (RouteGroup $group) {
             $controller = self::class;
 
             $group->post('create', "$controller::create");
             $group->post('get', "$controller::get");
             $group->post('get/{guid:uuid}', "$controller::getByGUID");
-            $group->post('update', "$controller::update");
             $group->post('add-attachment', "$controller::addAttachment");
         });
     }
-
 
     /**
      * @param ServerRequestInterface $request
@@ -45,34 +43,25 @@ class BankTransactionsController extends BaseController
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response)
     {
-        //Fetch a contact and pick the first one
-        $contact = $this->xero->load(Contact::class)->first();
+        $bankAccounts = $this->xero->load(Account::class)
+            ->where('Type', Account::ACCOUNT_TYPE_BANK);
 
-        //Fetch an account bank account to get a valid code
-        //this would probably be stored in your application
-        $account = $this->xero->load(Account::class)
-            ->where('Type', Account::ACCOUNT_TYPE_BANK)
-            ->first();
+        //[BankTransfers:Create]
+        $fromBankAccount = new FromBankAccount();
+        $fromBankAccount->setAccountId($bankAccounts->first()->AccountID);
 
-        $bankAccount = (new BankTransaction\BankAccount())
-            ->setAccountID($account->AccountID);
+        $toBankAccount = new ToBankAccount();
+        $toBankAccount->setAccountId($bankAccounts->last()->AccountID);
 
-        $lineItem = new BankTransaction\LineItem($this->xero);
-        $lineItem->setDescription('Some item')
-            ->setUnitAmount(100)
-            ->setAccountCode('400');
 
-        $bankTransaction = new BankTransaction($this->xero);
-        $bankTransaction->setReference('Ref-' . Strings::random_number())
-            ->setDate(new \DateTime('2017-01-02'))
-            ->setType(BankTransaction::TYPE_RECEIVE)
-            ->setBankAccount($bankAccount)
-            ->setContact($contact)
-            ->addLineItem($lineItem)
-            ->setLineAmountType('Exclusive');
-        $bankTransaction->save();
+        $bankTransfer = new BankTransfer($this->xero);
+        $bankTransfer->setDate(new \DateTime('2017-01-02'))
+            ->setToBankAccount($toBankAccount)
+            ->setFromBankAccount($fromBankAccount)
+            ->setAmount(50.00);
+        $bankTransfer->save();
 
-        return $this->jsonCodeResponse($response, $bankTransaction, 201);
+        return $this->jsonCodeResponse($response, $bankTransfer);
     }
 
     /**
@@ -83,12 +72,10 @@ class BankTransactionsController extends BaseController
      */
     public function get(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $bankTransactions = $this->xero->load(BankTransaction::class)
-            ->where('Status', BankTransaction::BANK_TRANSACTION_STATUS_AUTHORISED)
-            ->where('Type', BankTransaction::TYPE_RECEIVE)
+        $bankTransfers = $this->xero->load(BankTransfer::class)
             ->execute();
 
-        return $this->jsonCodeResponse($response, $bankTransactions);
+        return $this->jsonCodeResponse($response, $bankTransfers);
     }
 
     /**
@@ -99,7 +86,7 @@ class BankTransactionsController extends BaseController
      */
     public function getByGUID(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $account = $this->xero->loadByGUID(BankTransaction::class, $args['guid']);
+        $account = $this->xero->loadByGUID(BankTransfer::class, $args['guid']);
 
         return $this->jsonCodeResponse($response, $account);
     }
@@ -110,33 +97,14 @@ class BankTransactionsController extends BaseController
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function update(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        // In a real-world case, you'd be loading the from Xero
-        // or using the ->setGUID() method on a new instance
-        $bankTransaction = $this->xeroTestObjects->getBankTransaction();
-        $bankTransaction->setReference('My updated reference');
-        $bankTransaction->save();
-
-        return $this->jsonCodeResponse($response, $bankTransaction);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     * @throws \Exception
-     */
     public function addAttachment(ServerRequestInterface $request, ResponseInterface $response)
     {
-        // In a real-world case, you'd be loading the from Xero
-        // or using the ->setGUID() method on a new instance
-        $bankTransaction = $this->xeroTestObjects->getBankTransaction();
+        $bankTransfer = $this->xero->load(BankTransfer::class)->first();
 
         $attachment = Attachment::createFromLocalFile(APP_ROOT . '/data/helo-heroes.jpg');
-        $bankTransaction->addAttachment($attachment);
+        $bankTransfer->addAttachment($attachment);
 
-        return $this->jsonCodeResponse($response, ['$bankTransaction' => $bankTransaction, '$attachment' => $attachment]);
+        return $this->jsonCodeResponse($response, ['$bankTransfer' => $bankTransfer, '$attachment' => $attachment]);
     }
 
 }

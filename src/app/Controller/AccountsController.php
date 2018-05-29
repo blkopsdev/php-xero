@@ -94,10 +94,9 @@ class AccountsController extends BaseController
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response)
     {
-
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
+        $account = $this->xeroTestObjects->getAccount();
         $account->setDescription('My updated description');
         $account->save();
 
@@ -114,7 +113,7 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
+        $account = $this->xeroTestObjects->getAccount();
         $account->delete();
 
         return $this->jsonCodeResponse($response, $account);
@@ -130,7 +129,7 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
+        $account = $this->xeroTestObjects->getAccount();
         $account->setStatus(Account::ACCOUNT_STATUS_ARCHIVED);
         $account->save();
 
@@ -147,31 +146,11 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->getTestAccount();
+        $account = $this->xeroTestObjects->getAccount();
 
         $attachment = Attachment::createFromLocalFile(APP_ROOT . '/data/helo-heroes.jpg');
         $account->addAttachment($attachment);
 
-        return $this->jsonCodeResponse($response, $attachment);
-    }
-
-    /**
-     * Create a test object for updates and deletes
-     *
-     * @return Account
-     * @throws \XeroPHP\Remote\Exception
-     */
-    private function getTestAccount()
-    {
-        $code = Strings::random_number();
-
-        $account = new Account($this->xero);
-        $account->setName('Sales-' . $code)
-            ->setCode($code)
-            ->setDescription("This is my original description.")
-            ->setType(Account::ACCOUNT_TYPE_REVENUE);
-        $account->save();
-
-        return $account;
+        return $this->jsonCodeResponse($response, ['$account' => $account, '$attachment' => $attachment]);
     }
 }

@@ -9,11 +9,12 @@ define('APP_ROOT', realpath(__DIR__ . '/../'));
 include APP_ROOT . '/vendor/autoload.php';
 
 use App\Helper\CustomExceptionStrategy;
+use App\Helper\XeroTestObjects;
 use App\Helper\XeroSessionStorage;
 use League\Container\ReflectionContainer;
 use League\Plates\Engine;
 use League\Route\RouteCollection;
-use League\Route\Strategy\JsonStrategy;
+use XeroPHP\Application;
 use XeroPHP\Application\PublicApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -35,11 +36,9 @@ $container->share(Engine::class, function () {
     return new Engine(APP_ROOT . '/src/templates', 'phtml');
 });
 
-$container->share(XeroSessionStorage::class);
-
 // This is where the Xero application is instantiated.
 // This should happen wherever your services are registered
-$container->share(PublicApplication::class, function () use ($container) {
+$container->share(Application::class, function () use ($container) {
     $config = include APP_ROOT . '/config/xero.php';
     $application = new PublicApplication($config);
 
@@ -56,7 +55,6 @@ $container->share(PublicApplication::class, function () use ($container) {
     return $application;
 });
 
-
 //Routes
 $collection = new RouteCollection($container);
 
@@ -65,6 +63,8 @@ $collection->setStrategy(new CustomExceptionStrategy());
 
 \App\Controller\ApplicationController::registerRoutes($collection);
 \App\Controller\AccountsController::registerRoutes($collection);
+\App\Controller\BankTransactionsController::registerRoutes($collection);
+\App\Controller\BankTransfersController::registerRoutes($collection);
 
 
 $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
