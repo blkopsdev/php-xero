@@ -93,7 +93,7 @@ _The following actions are all supported, but examples not yet implemented in th
 ## Acknowledgement
 
 Special thanks to all the [Contributors](https://github.com/calcinai/xero-php/graphs/contributors) to the [xero-php](https://github.com/calcinai/xero-php) SDK
-  
+
 
 ## License
 
