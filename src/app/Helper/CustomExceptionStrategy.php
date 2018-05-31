@@ -50,7 +50,7 @@ class CustomExceptionStrategy extends ApplicationStrategy
             }
 
 
-            $plates = new Engine(APP_ROOT . '/src/templates', 'phtml');
+            $plates = new Engine(APP_ROOT . DS . 'src' . DS . 'templates', 'phtml');
 
             $response->getBody()->write(
                 $plates->render('exception', ['exception' => $e, 'code' => $code])

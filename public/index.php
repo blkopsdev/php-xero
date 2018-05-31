@@ -4,12 +4,12 @@
  * Everything is currently in one file, but should be split out into providers
  */
 
-define('APP_ROOT', realpath(__DIR__ . '/../'));
+define('DS', DIRECTORY_SEPARATOR);
+define('APP_ROOT', realpath(__DIR__ . DS . '..' . DS));
 
 include APP_ROOT . '/vendor/autoload.php';
 
 use App\Helper\CustomExceptionStrategy;
-use App\Helper\XeroTestObjects;
 use App\Helper\XeroSessionStorage;
 use League\Container\ReflectionContainer;
 use League\Plates\Engine;
@@ -33,14 +33,20 @@ $container->delegate(new ReflectionContainer());
 
 //Share the template engine into controllers instantiated by the container
 $container->share(Engine::class, function () {
-    return new Engine(APP_ROOT . '/src/templates', 'phtml');
+    return new Engine(APP_ROOT . DS . 'src' . DS . 'templates', 'phtml');
 });
+
 
 // This is where the Xero application is instantiated.
 // This should happen wherever your services are registered
 $container->share(Application::class, function () use ($container) {
-    $config = include APP_ROOT . '/config/xero.php';
-    $application = new PublicApplication($config);
+    $config_path = APP_ROOT . 'config' . DS . 'xero.php';
+
+    if(!file_exists($config_path) || !is_readable($config_path)){
+        throw new Exception(sprintf('[%s] is either missing or not readable', $config_path));
+    }
+
+    $application = new PublicApplication(include $config_path);
 
     /** @var XeroSessionStorage $sessionStorage */
     $sessionStorage = $container->get(XeroSessionStorage::class);

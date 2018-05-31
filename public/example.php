@@ -10,44 +10,6 @@ class ExampleClass
 
 
 
-
-
-
-	public function createBankTransfer($xero)
-	{
-		$str = '';
-
-		$account = $this->getBankAccount($xero);
-
-		if (count($account) > 1) {
-
-			//[BankTransfers:Create]
-			$fromBankAccount = new \XeroPHP\Models\Accounting\BankTransfer\FromBankAccount($xero);
-			$fromBankAccount->setCode($account[0]["Code"])
-				->setAccountId($account[0]["AccountId"]);
-
-			$toBankAccount = new \XeroPHP\Models\Accounting\BankTransfer\ToBankAccount($xero);
-			$toBankAccount->setCode($account[1]["Code"])
-				->setAccountId($account[1]["AccountId"]);
-
-			$banktransfer = new \XeroPHP\Models\Accounting\BankTransfer($xero);
-			$banktransfer->setDate(new DateTime('2017-01-02'))
-				->setToBankAccount($toBankAccount)
-				->setFromBankAccount($fromBankAccount)
-				->setAmount("50");
-			$banktransfer->save();
-			//[/BankTransfers:Create]
-
-			$str = $str ."Create Bank Transfer: " . $banktransfer["BankTransferID"] . " -- $" . $banktransfer["Amount"] . "<br>" ;
-
-		} else {
-			$str = $str ."Found less than 2 Bank Accounts  - can't work with Bank Transfers without 2. ";
-		}
-
-		return $str;
-	}
-
-
 	public function getBrandingTheme($xero)
 	{
 		$str = '';

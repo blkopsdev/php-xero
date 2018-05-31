@@ -10,4 +10,4 @@ Thumbs.db
 composer.lock
 composer.phar
 build
-config/*.php
+config/xero.php
