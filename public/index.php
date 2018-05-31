@@ -40,9 +40,9 @@ $container->share(Engine::class, function () {
 // This is where the Xero application is instantiated.
 // This should happen wherever your services are registered
 $container->share(Application::class, function () use ($container) {
-    $config_path = APP_ROOT . 'config' . DS . 'xero.php';
+    $config_path = APP_ROOT . DS . 'config' . DS . 'xero.php';
 
-    if(!file_exists($config_path) || !is_readable($config_path)){
+    if (!file_exists($config_path) || !is_readable($config_path)) {
         throw new Exception(sprintf('[%s] is either missing or not readable', $config_path));
     }
 
