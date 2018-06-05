@@ -1,7 +1,18 @@
+html {
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 h5 {
     text-transform: uppercase;
     font-size: 1rem;
     margin-bottom: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.8rem;
+    margin: 0.2rem;
+    text-transform: uppercase;
 }
 
 .badge {
