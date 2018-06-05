@@ -7,6 +7,7 @@
 namespace App\Controller;
 
 use App\Helper\Strings;
+use App\Helper\VariableCollection;
 use League\Route\RouteCollection;
 use League\Route\RouteGroup;
 use Psr\Http\Message\ResponseInterface;
@@ -136,7 +137,7 @@ class BankTransactionsController extends BaseController
         $attachment = Attachment::createFromLocalFile(APP_ROOT . '/data/helo-heroes.jpg');
         $bankTransaction->addAttachment($attachment);
 
-        return $this->jsonCodeResponse($response, ['$bankTransaction' => $bankTransaction, '$attachment' => $attachment]);
+        return $this->jsonCodeResponse($response, new VariableCollection(compact('bankTransaction', 'attachment')));
     }
 
 }

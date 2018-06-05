@@ -12,10 +12,10 @@ use League\Route\RouteCollection;
 use League\Route\RouteGroup;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use XeroPHP\Models\Accounting\Account;
 use XeroPHP\Models\Accounting\Attachment;
+use XeroPHP\Models\Accounting\Contact;
 
-class AccountsController extends BaseController
+class ContactsController extends BaseController
 {
     /**
      * Register the routes for this controller
@@ -24,14 +24,13 @@ class AccountsController extends BaseController
      */
     public static function registerRoutes(RouteCollection $collection)
     {
-        $collection->group('accounts', function (RouteGroup $group) {
+        $collection->group('contacts', function (RouteGroup $group) {
             $controller = self::class;
 
             $group->post('create', "$controller::create");
             $group->post('get', "$controller::get");
             $group->post('get/{guid:uuid}', "$controller::getByGUID");
             $group->post('update', "$controller::update");
-            $group->post('delete', "$controller::delete");
             $group->post('archive', "$controller::archive");
             $group->post('add-attachment', "$controller::addAttachment");
         });
@@ -48,15 +47,14 @@ class AccountsController extends BaseController
     {
         $code = Strings::random_number();
 
-        $account = new Account($this->xero);
-        $account->setName('Sales-' . $code)
-            ->setCode($code)
-            ->setDescription("This is my original description.")
-            ->setType(Account::ACCOUNT_TYPE_REVENUE);
-        $account->save();
+        $contact = new Contact($this->xero);
+        $contact->setName('Sidney-' . $code)
+            ->setFirstName('Sid-' . $code)
+            ->setLastName("Maestre - " . $code)
+            ->setEmailAddress("sidney" . $code . "@maestre.com");
+        $contact->save();
 
-
-        return $this->jsonCodeResponse($response, $account, 201);
+        return $this->jsonCodeResponse($response, $contact, 201);
     }
 
     /**
@@ -67,11 +65,11 @@ class AccountsController extends BaseController
      */
     public function get(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $accounts = $this->xero->load(Account::class)
-            ->where('Type', Account::ACCOUNT_TYPE_BANK)
+        $contacts = $this->xero->load(Contact::class)
+            ->where('ContactStatus', Contact::CONTACT_STATUS_ACTIVE)
             ->execute();
 
-        return $this->jsonCodeResponse($response, $accounts);
+        return $this->jsonCodeResponse($response, $contacts);
     }
 
     /**
@@ -85,9 +83,9 @@ class AccountsController extends BaseController
      */
     public function getByGUID(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $account = $this->xero->loadByGUID(Account::class, $args['guid']);
+        $contact = $this->xero->loadByGUID(Contact::class, $args['guid']);
 
-        return $this->jsonCodeResponse($response, $account);
+        return $this->jsonCodeResponse($response, $contact);
     }
 
     /**
@@ -100,27 +98,12 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
-        $account->setDescription('My updated description');
-        $account->save();
+        $contact = $this->xeroTestObjects->getContact();
 
-        return $this->jsonCodeResponse($response, $account);
-    }
+        $contact->setName('Sid-' . Strings::random_number());
+        $contact->save();
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     * @throws \Exception
-     */
-    public function delete(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        // In a real-world case, you'd be loading the from Xero
-        // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
-        $account->delete();
-
-        return $this->jsonCodeResponse($response, $account);
+        return $this->jsonCodeResponse($response, $contact);
     }
 
     /**
@@ -133,11 +116,12 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
-        $account->setStatus(Account::ACCOUNT_STATUS_ARCHIVED);
-        $account->save();
+        $contact = $this->xeroTestObjects->getContact();
 
-        return $this->jsonCodeResponse($response, $account);
+        $contact->setContactStatus(Contact::CONTACT_STATUS_ARCHIVED);
+        $contact->save();
+
+        return $this->jsonCodeResponse($response, $contact);
     }
 
     /**
@@ -150,11 +134,11 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
+        $contact = $this->xeroTestObjects->getContact();
 
         $attachment = Attachment::createFromLocalFile(APP_ROOT . '/data/helo-heroes.jpg');
-        $account->addAttachment($attachment);
+        $contact->addAttachment($attachment);
 
-        return $this->jsonCodeResponse($response, new VariableCollection(compact('account', 'attachment')));
+        return $this->jsonCodeResponse($response, new VariableCollection(compact('contact', 'attachment')));
     }
 }

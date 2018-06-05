@@ -34,6 +34,24 @@
                 'endpoints' => $c + $r + $attachment
             ]);
 
+            $this->insert('partials/accordion-item', [
+                'key' => 'branding-themes',
+                'name' => 'Branding Themes',
+                'endpoints' => $r
+            ]);
+
+            $this->insert('partials/accordion-item', [
+                'key' => 'contacts',
+                'name' => 'Contacts',
+                'endpoints' => $c + $r + $u + $archive + $attachment
+            ]);
+
+            $this->insert('partials/accordion-item', [
+                'key' => 'contact-groups',
+                'name' => 'Contact Groups',
+                'endpoints' => $c + $r + $u + $d + ['add-contact' => 'Add Contact', 'remove-contact' => 'Remove Contact']
+            ]);
+
             ?>
 
         </div>
@@ -52,7 +70,7 @@
             <a href="#" class="badge badge-light" id="add-guid" style="text-transform: inherit">+ Add GUID</a>
 
             <div class="ml-auto">
-                <button class="btn btn-primary" id="run-endpoint">Make Request</button>
+                <button class="btn btn-primary btn-sm" id="run-endpoint">Make Request</button>
             </div>
         </div>
 

@@ -71,6 +71,9 @@ $collection->setStrategy(new CustomExceptionStrategy());
 \App\Controller\AccountsController::registerRoutes($collection);
 \App\Controller\BankTransactionsController::registerRoutes($collection);
 \App\Controller\BankTransfersController::registerRoutes($collection);
+\App\Controller\BrandingThemesController::registerRoutes($collection);
+\App\Controller\ContactsController::registerRoutes($collection);
+\App\Controller\ContactGroupsController::registerRoutes($collection);
 
 
 $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);

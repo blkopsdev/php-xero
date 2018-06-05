@@ -10,6 +10,7 @@ use XeroPHP\Application;
 use XeroPHP\Models\Accounting\Account;
 use XeroPHP\Models\Accounting\BankTransaction;
 use XeroPHP\Models\Accounting\Contact;
+use XeroPHP\Models\Accounting\ContactGroup;
 
 class XeroTestObjects
 {
@@ -78,6 +79,38 @@ class XeroTestObjects
         $bankTransaction->save();
 
         return $bankTransaction;
+    }
+
+    /**
+     * @return Contact
+     * @throws \XeroPHP\Remote\Exception
+     */
+    public function getContact()
+    {
+        $code = Strings::random_number();
+
+        $contact = new Contact($this->xero);
+        $contact->setName('Sidney-' . $code)
+            ->setFirstName('Sid-' . $code)
+            ->setLastName("Maestre - " . $code)
+            ->setEmailAddress("sidney" . $code . "@maestre.com");
+        $contact->save();
+
+        return $contact;
+    }
+
+    /**
+     * @throws \XeroPHP\Remote\Exception
+     */
+    public function getContactGroup()
+    {
+        $code = Strings::random_number();
+
+        $contactGroup = new ContactGroup($this->xero);
+        $contactGroup->setName('Rebels-' . $code);
+        $contactGroup->save();
+
+        return $contactGroup;
     }
 
 }
