@@ -48,6 +48,12 @@ class Strings
         } elseif (is_scalar($payload_data)) {
             //Var export makes types clearer
             return var_export($payload_data, true);
+        } elseif ($payload_data instanceof VariableCollection) {
+            $r = '';
+            foreach ($payload_data as $key => $value){
+                $r .= sprintf("%s$%s => %s\n", $indent, $key, self::print_r($value, $level + 1));
+            }
+            return $r;
         } elseif ($payload_data instanceof Collection) {
             $assoc_data = $payload_data->getArrayCopy();
         } elseif ($payload_data instanceof Model) {
@@ -75,7 +81,6 @@ class Strings
         return $r;
 
     }
-
 
 
 }
