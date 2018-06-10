@@ -1,0 +1,59 @@
+html {
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h5 {
+    text-transform: uppercase;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.8rem;
+    margin: 0.2rem;
+    text-transform: uppercase;
+}
+
+.badge {
+    padding: 0.5rem 0.8rem;
+    margin: 0.2rem;
+    text-transform: uppercase;
+}
+
+#endpoints-accordion .card-header {
+    padding: .3rem .75rem;
+    border-bottom: none;
+}
+
+#endpoints-accordion .card:not(:first-child) {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#endpoints-accordion .card:not(:last-child) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#endpoints-accordion .card-body {
+    border-top: 1px solid rgba(0, 0, 0, .125);
+}
+
+.endpoint-control {
+    padding: .75rem 1.25rem;
+    display: none;
+}
+
+.endpoint-control span.divider {
+    margin: 0 0.5rem;
+    color: #666;
+}
+
+.endpoint-control input {
+    height: 1.6rem;
+    width: 22rem;
+    font-family: monospace, serif;
+    display: none;
+}

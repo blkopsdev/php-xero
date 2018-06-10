@@ -1,0 +1,10 @@
+<?php $this->layout('base', ['title' => 'An exception has occurred']) ?>
+
+
+<div class="card text-white bg-danger">
+    <div class="card-header"><?= $this->e($code) ?></div>
+    <div class="card-body">
+        <h5 class="card-title"><?= $this->e($exception->getMessage()) ?></h5>
+        <pre class="card-text text-white"><?= $this->e($exception->getTraceAsString()) ?></pre>
+    </div>
+</div>

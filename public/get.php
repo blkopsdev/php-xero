@@ -20,7 +20,7 @@
 		    ],
 	    'curl' => [
 	        CURLOPT_USERAGENT   => 'xero-php sample app',
-	        CURLOPT_CAINFO => __DIR__.'/certs/ca-bundle.crt',
+	        CURLOPT_CAINFO => __DIR__ . '/certs/ca-bundle.crt',
 	    ],
 	];
 	
@@ -78,7 +78,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"  crossorigin="anonymous"></script>
-	<script src="xero-sdk-ui/xero.js"  crossorigin="anonymous"></script>
+	<script src="public/xero-sdk-ui/xero.js" crossorigin="anonymous"></script>
 	<script type="text/javascript">
 	   	document.addEventListener("DOMContentLoaded", function() {
 			loadGet("xero-php sample app","disconnect.php","<?php echo($endpoint) ?>", "<?php echo($action) ?>");
@@ -98,65 +98,6 @@
 		<?php
 			switch($endpoint)
 			{
-			    case "Accounts":
-				    switch($action)
-					{
-				    	case "Create":
-				        echo $ex->createAccount($xero);
-				        break;
-				        case "Read":
-				        echo $ex->getAccount($xero);
-				        break;
-				        case "Update":
-				        echo $ex->updateAccount($xero);
-				    	break;
-				    	case "Delete":
-				        echo $ex->deleteAccount($xero);
-				    	break;
-				    	case "Archive":
-				        echo $ex->archiveAccount($xero);
-				    	break;
-				    	case "Attachment":
-				        echo $ex->attachmentAccount($xero);
-				    	break;
-				    	default:
-					    echo $action . " action not supported in API";
-				    }
-			    break;
-
-			    case "BankTransactions":
-				    switch($action)
-					{
-				    	case "Create":
-				        echo $ex->createBankTransaction($xero);
-				        break;
-				        case "Read":
-				        echo $ex->getBankTransaction($xero);
-				        break;
-				        case "Update":
-				        echo $ex->updateBankTransaction($xero);
-				    	break;
-				    	case "Delete":
-				        echo $ex->deleteBankTransaction($xero);
-				    	break;
-				    	default:
-					    echo $action . " action not supported in API";
-				    }
-				 break;
-
-				 case "BankTransfers":
-				    switch($action)
-					{
-				    	case "Create":
-				        echo $ex->createBankTransfer($xero);
-				        break;
-				        case "Read":
-				        echo $ex->getBankTransfer($xero);
-				        break;
-				        default:
-					    echo $action . " action not supported in API";
-				    }
-				 break;
 
 				 case "BrandingThemes":
 				    switch($action)

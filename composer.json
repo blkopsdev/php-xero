@@ -1,17 +1,23 @@
 {
-    "name": "xero/xero-php-sample-app",
-    "description": "Xero sample app for PHP SDK",
-    "type": "project",
-    "require": {
-        "calcinai/xero-php": "1.7",
-        "monolog/monolog": "1.0"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "SidneyAllen",
-            "email": "sid.maestre@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev"
+  "name": "xero/xero-php-sample-app",
+  "description": "Xero sample app for PHP SDK",
+  "type": "project",
+  "require": {
+    "calcinai/xero-php": "^1.8",
+    "zendframework/zend-diactoros": "^1.7",
+    "league/route": "^3.0",
+    "league/plates": "^3.3"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "SidneyAllen",
+      "email": "sid.maestre@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/app/"
+    }
+  }
 }
