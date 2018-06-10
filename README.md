@@ -41,7 +41,7 @@ There is an example config file in `config/xero.example.php`, which contains all
     ];
 ```
 
-###Running
+### Running
 
 The best way to run this project (with the least configuration), is using PHP's development web server.  Change to the webroot and start it on your chosen port
 
