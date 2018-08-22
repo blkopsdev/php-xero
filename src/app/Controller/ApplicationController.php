@@ -54,6 +54,8 @@ class ApplicationController extends BaseController
         $controller = self::class;
 
         $collection->get('/', "$controller::index");
+        $collection->get('/items', "$controller::items");
+        $collection->get('/invoices', "$controller::invoices");
         $collection->group('application', function (RouteGroup $group) use ($controller) {
 
             $group->get('connect', "$controller::connect");
@@ -87,6 +89,64 @@ class ApplicationController extends BaseController
 
         $response->getBody()->write(
             $this->plates->render('index', ['organisation_name' => $session->organisation_name])
+        );
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * This is the main UI, but will redirect to the connect URL if there is no Xero Session
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \XeroPHP\Remote\Exception
+     */
+    public function items(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        //If there's not a Xero session, redirect to the connect method
+        if (null === $session = $this->xeroSessionStorage->getSession()) {
+            return new RedirectResponse('/application/connect');
+        }
+
+        //If we don't have the org name, go and fetch it
+        if (!isset($session->organisation_name)) {
+            /** @var Organisation $organisation */
+            $organisation = current($this->xero->load(Organisation::class)->execute());
+            $session->organisation_name = $organisation->getName();
+        }
+
+        $response->getBody()->write(
+            $this->plates->render('items', ['organisation_name' => $session->organisation_name])
+        );
+
+        return $response->withStatus(200);
+    }
+
+    /**
+     * This is the main UI, but will redirect to the connect URL if there is no Xero Session
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \XeroPHP\Remote\Exception
+     */
+    public function invoices(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        //If there's not a Xero session, redirect to the connect method
+        if (null === $session = $this->xeroSessionStorage->getSession()) {
+            return new RedirectResponse('/application/connect');
+        }
+
+        //If we don't have the org name, go and fetch it
+        if (!isset($session->organisation_name)) {
+            /** @var Organisation $organisation */
+            $organisation = current($this->xero->load(Organisation::class)->execute());
+            $session->organisation_name = $organisation->getName();
+        }
+
+        $response->getBody()->write(
+            $this->plates->render('invoices', ['organisation_name' => $session->organisation_name])
         );
 
         return $response->withStatus(200);

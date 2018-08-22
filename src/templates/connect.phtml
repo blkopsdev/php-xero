@@ -1,14 +1,6 @@
 <?php $this->layout('base', ['title' => 'Connect']) ?>
 
-<div class="alert alert-info" role="alert">
-    The authorisation flow is all handled in the <code>ApplicationController</code>, which is located at
-    <code><?= (new ReflectionClass(\App\Controller\ApplicationController::class))->getFileName() ?></code>
-</div>
-
-<br />
-
-
-<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-center" style="position: relative; top: 100px;">
     <div class="card col-md-5">
         <div class="card-body">
             <h5 class="card-title">Connect to Xero</h5>

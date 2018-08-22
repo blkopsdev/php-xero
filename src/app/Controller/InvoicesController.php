@@ -12,10 +12,10 @@ use League\Route\RouteCollection;
 use League\Route\RouteGroup;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use XeroPHP\Models\Accounting\Account;
+use XeroPHP\Models\Accounting\Invoice;
 use XeroPHP\Models\Accounting\Attachment;
 
-class AccountsController extends BaseController
+class InvoicesController extends BaseController
 {
     /**
      * Register the routes for this controller
@@ -24,7 +24,7 @@ class AccountsController extends BaseController
      */
     public static function registerRoutes(RouteCollection $collection)
     {
-        $collection->group('accounts', function (RouteGroup $group) {
+        $collection->group('invoices', function (RouteGroup $group) {
             $controller = self::class;
 
             $group->post('create', "$controller::create");
@@ -32,8 +32,6 @@ class AccountsController extends BaseController
             $group->post('get/{guid:uuid}', "$controller::getByGUID");
             $group->post('update', "$controller::update");
             $group->post('delete', "$controller::delete");
-            $group->post('archive', "$controller::archive");
-            $group->post('add-attachment', "$controller::addAttachment");
         });
     }
 
@@ -48,15 +46,14 @@ class AccountsController extends BaseController
     {
         $code = Strings::random_number();
 
-        $account = new Account($this->xero);
-        $account->setName('Sales-' . $code)
+        $invoice = new Invoices($this->xero);
+        $invoice->setName('Sales-' . $code)
             ->setCode($code)
-            ->setDescription("This is my original description.")
-            ->setType(Account::ACCOUNT_TYPE_REVENUE);
-        $account->save();
+            ->setDescription("This is my original description.");
+        $invoice->save();
 
 
-        return $this->jsonCodeResponse($response, $account, 201);
+        return $this->jsonCodeResponse($response, $invoice, 201);
     }
 
     /**
@@ -67,11 +64,10 @@ class AccountsController extends BaseController
      */
     public function get(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $accounts = $this->xero->load(Account::class)
-            ->where('Type', Account::ACCOUNT_TYPE_BANK)
+        $invoices = $this->xero->load(Invoice::class)
             ->execute();
 
-        return $this->jsonCodeResponse($response, $accounts);
+        return $this->jsonCodeResponse($response, $invoices);
     }
 
     /**
@@ -85,9 +81,9 @@ class AccountsController extends BaseController
      */
     public function getByGUID(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $account = $this->xero->loadByGUID(Account::class, $args['guid']);
+        $invoice = $this->xero->loadByGUID(Invoice::class, $args['guid']);
 
-        return $this->jsonCodeResponse($response, $account);
+        return $this->jsonCodeResponse($response, $invoice);
     }
 
     /**
@@ -100,11 +96,11 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
-        $account->setDescription('My updated description');
-        $account->save();
+        $invoice = $this->xeroTestObjects->getInvoices();
+        $invoice->setDescription('My updated description');
+        $invoice->save();
 
-        return $this->jsonCodeResponse($response, $account);
+        return $this->jsonCodeResponse($response, $invoice);
     }
 
     /**
@@ -117,44 +113,9 @@ class AccountsController extends BaseController
     {
         // In a real-world case, you'd be loading the from Xero
         // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
-        $account->delete();
+        $invoice = $this->xeroTestObjects->getInvoices();
+        $invoice->delete();
 
-        return $this->jsonCodeResponse($response, $account);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     * @throws \Exception
-     */
-    public function archive(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        // In a real-world case, you'd be loading the from Xero
-        // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
-        $account->setStatus(Account::ACCOUNT_STATUS_ARCHIVED);
-        $account->save();
-
-        return $this->jsonCodeResponse($response, $account);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     * @throws \Exception
-     */
-    public function addAttachment(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        // In a real-world case, you'd be loading the from Xero
-        // or using the ->setGUID() method on a new instance
-        $account = $this->xeroTestObjects->getAccount();
-
-        $attachment = Attachment::createFromLocalFile(APP_ROOT . '/data/helo-heroes.jpg');
-        $account->addAttachment($attachment);
-
-        return $this->jsonCodeResponse($response, new VariableCollection(compact('account', 'attachment')));
+        return $this->jsonCodeResponse($response, $invoice);
     }
 }
